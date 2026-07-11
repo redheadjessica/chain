@@ -75,29 +75,38 @@ gitignored. See [privacy.md](privacy.md).
 
 ---
 
-## Intake: adapt to the corpus *and* the budget
+## Intake: adapt to the user's structure
 
-CHAIN adapts to where your material lives **and** to how much model-assisted setup you
-want to pay for. Intake is three **levels of assistance around one source-mapping
-model** — not three systems:
+CHAIN maps your existing folders in place. Setup is three **levels of assistance around
+one source-mapping model** — not three systems — so you use as much or as little
+model help as your corpus needs:
 
-| Level | What it does | Model cost |
-|---|---|---|
-| **Manual mapping** | You state paths, `type`, include/exclude, filenames, markers, and what each source contains. Deterministic indexing. | ~none |
-| **Assisted mapping** *(recommended default)* | CHAIN samples a bounded number of files, proposes a source config, and you confirm or correct it. Sample size and model are configurable for cost. | bounded, tunable |
-| **Deep discovery** *(opt-in)* | CHAIN inspects a broader, messier corpus and proposes a full mapping. Clearly labeled token-intensive. | higher |
+| Level | What it does |
+|---|---|
+| **Manual mapping** | You state paths, `type`, `roles`, include/exclude, and markers. Deterministic indexing. |
+| **Assisted mapping** *(recommended default)* | CHAIN samples a few files, proposes a mapping, you confirm or correct it. Sample size and model are configurable. |
+| **Deep discovery** *(opt-in)* | CHAIN inspects a broader, messier corpus and proposes a mapping. |
 
-The cost model is explicit: **organization and explicit mapping reduce tokens;
-model-assisted discovery trades tokens for less manual setup.** A tidy corpus can be
-mapped manually with almost no inference; a messy one can opt into deeper inspection.
+The bias is simple: prefer deterministic mapping when you already know your structure;
+use model-assisted inspection when it meaningfully reduces manual effort. Users choose
+their own model and manage their own usage — token budgeting is not a product concept
+CHAIN foregrounds.
+
+**Source roles.** Each source carries small, generic, domain-agnostic **role** hints —
+`published`, `drafts`, `questions`, `feedback`, `reviews`, `research`, `projects`,
+`offers`, `audience-needs`, `idea-source`, `reference`, `changes`, `custom` — that tell
+Discover what kind of signal it may hold. A source may have several; unknown roles are
+allowed. Roles are how CHAIN stays domain-agnostic: a product person's applications and
+a studio's client questions are both role `questions`, read the same way. `type` is just
+a reading-behavior label; no industry concept (résumés, recruiters, job descriptions) is
+built into the core.
 
 ## Durable source mappings and the ingestion ledger
 
 Model-assisted intake exists to produce **durable configuration, not per-run
-reasoning.** Once CHAIN knows a folder holds job applications, a heading marks writing
-ideas, another folder holds published posts, and a file is the voice spec, that mapping
-is saved (it *is* the `sources:` config) and reused. CHAIN never re-asks a model to
-rediscover structure on a normal run; you can remap a source when you want to.
+reasoning.** Once a mapping is set — a folder's roles, a heading that marks an idea list,
+which file is the voice spec — it *is* the `sources:` config and is reused. CHAIN never
+re-asks a model to rediscover structure on a normal run; you can remap when you want to.
 
 Idempotency comes from an **ingestion ledger** in `chain_home/state/` — a deterministic
 record keyed by `(source, path)` with each file's content hash, metadata, and the ideas
@@ -172,11 +181,15 @@ explicitly and records the reason when it forks a new idea.
    skipping the sweep)
 ```
 
-**Discover mode** (autonomous): connectors normalize your sources → a multi-lens sweep
-proposes idea seeds (recurring-answer, convergent-demand, fresh-lesson, old-meets-now,
-latent-POV, overuse-guard) → seeds merge into the backlog under the hygiene rules →
-selection picks N by positioning value, freshness, timeliness, and **your stated
-interest** → selected ideas develop into briefs.
+**Discover mode** (autonomous): connectors normalize your sources → the portable
+`chain-discoverer` agent runs a sweep of eight **domain-agnostic lenses**
+(`repeated-question`, `converging-signal`, `fresh-lesson`, `old-meets-now`, `latent-pov`,
+`expansion-opportunity`, `translation-opportunity`, `coverage-guard` — see
+[canon/discover-lenses.md](../canon/discover-lenses.md)) → it emits idea seeds with
+evidence → a lightweight **deterministic** selection (dedup against the backlog +
+diversify across lenses/pillars + cap) picks a few → selected ideas develop into briefs.
+The seeds and their premises come from the LLM; selection does not re-score seed quality,
+so it is not a quality ranking — only a dedup-and-spread.
 
 **Directed mode** (you provide input — a premise, notes, a partial draft, an
 application answer, a file, a URL, a backlog idea, a short post to expand, an article
@@ -279,7 +292,8 @@ article+companion bundle, and expanding an existing piece.
 ## One backlog (V1, deliberately un-clever)
 
 There is **one main ideas backlog** (`ideas.csv`). Everything flows into it: your
-manually entered ideas, writing ideas harvested from job applications, unfinished
+manually entered ideas, ideas harvested from any marked source (e.g. job applications or
+a notes file), unfinished
 drafts, CHAIN-generated ideas, and published pieces worth expanding or following up.
 **No per-source review queues.** Harvested ideas enter automatically with status
 `proposed`; you rank, annotate, park, or reject them in one place.
@@ -328,6 +342,6 @@ prepares-not-publishes; single-source-of-truth canon and truth/standing discipli
 modes; the map-in-place config + connector intake; the two-ideas location model
 (no Profile); channel/format rule packs (LinkedIn as one pack); Positioning Impact as
 the primary axis; the expanded packet; bundles + the evaluator's bundle mode;
-configurable runs; job-application idea harvesting.
+configurable runs; generic marker-based idea harvesting (job applications are one example).
 
 See [future-work.md](future-work.md) for what is intentionally deferred.

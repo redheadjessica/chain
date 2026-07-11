@@ -1,0 +1,2 @@
+piece_id,idea_id,title_or_opening,format,channel,status,pub_date,url,final_text_path,parent_piece_id,related_piece_ids,relation_type,pillar,notes
+PIECE-0001,IDEA-0001,"Three ingredients. Sugar, lemon, water.",short_post,instagram,published,2026-03-05,https://example.com/studio/three-ingredients,,,,,educates-clients,"The existing spring post."

@@ -37,36 +37,43 @@ sources:
     enabled: true
 ```
 
-## Supported source types (V1)
+## Roles, not industries
 
-| `type` | What it is | Expected shape | Feeds |
-|---|---|---|---|
-| `linkedin_posts` | Your published short-form archive | one file per post; text/markdown | corpus + overuse baseline |
-| `longform` | Medium / Substack / essays | one file per piece | corpus |
-| `website` | Exported site / page content | text/markdown/html | corpus |
-| `job_applications` | One subfolder per application | text/markdown; a heading marking suggested writing ideas | **idea harvest** + corpus |
-| `repo` | A project repository | markdown, CHANGELOG | corpus ("what changed → lesson") |
-| `backlog` | An optional hand-kept idea list | one markdown/CSV file | idea seeds (one source among many) |
+A source declares **roles** — small, generic hints about the kind of signal it carries.
+They are how CHAIN reads any domain the same way:
+
+`published` · `drafts` · `questions` · `feedback` · `reviews` · `research` · `projects`
+· `offers` · `audience-needs` · `idea-source` · `reference` · `changes` · `custom`
+
+A source may list several; unknown roles are allowed (they pass to the Discover agent).
+`type` is a free reading-behavior label (`text` is the generic default; `linkedin_posts`,
+`longform`, `website`, `repo`, `job_applications`, `backlog` are conveniences) — in V1
+all text sources read alike, so **roles**, not `type`, carry the meaning.
+
+Examples across domains (same mechanism):
+
+| Source | roles | Domain |
+|---|---|---|
+| published essays / posts | `published` | any |
+| FAQs / client questions / application answers | `questions`, `audience-needs` | product person, studio, clinic |
+| reviews / testimonials | `reviews`, `feedback` | service business |
+| project repo / changelog | `projects`, `changes` | any builder |
+| consultation or working notes | `reference`, `changes` | studio, consultancy |
 
 ## Two kinds of ingestion
 
-- **Corpus read** — most sources contribute normalized text the Discover lenses scan
-  for patterns.
-- **Idea harvest** — `job_applications` additionally extracts the 1–3 writing-idea
-  suggestions your job-application agent already emits, found by a **configurable
-  `idea_marker` heading** (default `"Writing ideas"`) so no filename or wording is
-  hard-coded. Each becomes an idea seed (`source_type=job-application`).
+- **Corpus read** — sources contribute normalized excerpts the Discover lenses scan for
+  patterns.
+- **Idea harvest** — *any* source with a configured `idea_marker` heading has its
+  explicitly-listed ideas extracted into the backlog. A job-applications folder whose
+  files carry a "Writing ideas" section is just one example; a notes file with an "Ideas"
+  heading works identically. No filename or wording is hard-coded, and no special
+  connector is required.
 
 ## Recommended layout for brand-new users (example only — never required)
 
-If you're starting from scratch and want a suggestion:
-
-```
-~/writing/linkedin/      ~/writing/longform/      ~/applications/<company>/
-```
-
-But if your writing already lives somewhere else, keep it there and point `path` at
-it. Adapting to your structure is a core design principle — see
+Keep your material wherever it already lives and point `path` at it. Adapting to your
+structure is a core design principle — see
 [architecture.md](architecture.md#design-principles).
 
 ## Format discipline (V1)

@@ -11,7 +11,7 @@ here gets quietly built early. V1 scope is the [architecture](architecture.md).
 - Long-form + companion-post bundles, with the evaluator's bundle mode
 - Ideas-backlog aggregation and published-piece indexing
 - Relationships among ideas and pieces (derived + linked)
-- Ingesting writing ideas already produced inside job-application folders
+- Generic marker-based idea harvesting from any source (job-application folders are one example)
 - Basic backlog hygiene (dedup, link, mark-produced, preserve-rejected, evergreen vs
   time-sensitive, resurface-on-new-material, honor user interest)
 - The five-output autonomous run preset

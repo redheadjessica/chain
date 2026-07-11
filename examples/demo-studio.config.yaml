@@ -1,0 +1,34 @@
+# CHAIN — second demo persona: a local sugaring studio.
+#
+# Proves CHAIN is domain-agnostic. Same engine, same lenses, entirely different corpus
+# and positioning pillars — no career/product assumptions. Sources are mapped in place
+# with generic ROLES that tell Discover how to read them.
+
+chain_home: ./.chain/demo-studio
+positioning_pillars: "{chain_home}/positioning-pillars.md"
+
+sources:
+  - name: faqs
+    type: text
+    path: ./examples/demo-sources-studio/faqs
+    roles: [questions, published]
+    include: ["*.md"]
+  - name: reviews
+    type: text
+    path: ./examples/demo-sources-studio/reviews
+    roles: [reviews, feedback]
+    include: ["*.md"]
+  - name: notes
+    type: text
+    path: ./examples/demo-sources-studio/notes
+    roles: [reference, changes, audience-needs]
+    include: ["*.md"]
+  - name: posts
+    type: text
+    path: ./examples/demo-sources-studio/posts
+    roles: [published]
+    include: ["*.md"]
+
+defaults:
+  channel: neutral
+  format: short_post

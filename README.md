@@ -8,10 +8,12 @@ turns the writing you've *already done* into new public work.
 > you a publish-ready packet with an honest verdict. **It prepares — you publish.**
 > CHAIN never posts on your behalf.
 
-CHAIN reads your source libraries **where they already live** (LinkedIn posts, essays,
-job applications, project repos), finds ideas worth writing, and takes each through a
-shared **Draft → Evaluate → Finalize** spine into a finished **piece** for any channel
-— a short LinkedIn post, a Medium article, a companion post, a website essay.
+CHAIN reads your source libraries **where they already live** and finds ideas worth
+writing, then takes each through a shared **Draft → Evaluate → Finalize** spine into a
+finished piece for any channel — a short post, a Medium article, a companion post, a
+website essay. It's **domain-agnostic**: the sources might be a product person's essays
+and project notes, or a sugaring studio's FAQs, reviews, and consultation notes. Same
+engine, same lenses, your voice.
 
 ## Design principles
 

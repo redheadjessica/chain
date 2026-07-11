@@ -19,18 +19,21 @@ sources:
   - name: linkedin
     type: linkedin_posts
     path: ./examples/demo-sources/linkedin
+    roles: [published]
     include: ["*.md"]
     enabled: true
   - name: longform
     type: longform
     path: ./examples/demo-sources/longform
+    roles: [published]
     include: ["*.md"]
     enabled: true
   - name: applications
-    type: job_applications
+    type: job_applications          # one example of a source; nothing special about it
     path: ./examples/demo-sources/applications
+    roles: [questions, idea-source]
     include: ["*.md"]
-    idea_marker: "Writing ideas"
+    idea_marker: "Writing ideas"    # harvesting is driven by this marker, on any source
     enabled: true
 
 defaults:

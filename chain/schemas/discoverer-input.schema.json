@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-discoverer input",
+  "type": "object",
+  "required": ["positioning_pillars", "lenses", "sources", "existing_idea_titles", "max_seeds"],
+  "additionalProperties": false,
+  "properties": {
+    "positioning_pillars": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {"id": {"type": "string"}, "label": {"type": "string"}}
+      }
+    },
+    "lenses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "pattern"],
+        "properties": {"key": {"type": "string"}, "pattern": {"type": "string"}}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "roles", "docs"],
+        "properties": {
+          "name": {"type": "string"},
+          "roles": {"type": "array", "items": {"type": "string"}},
+          "docs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["ref", "excerpt"],
+              "properties": {
+                "ref": {"type": "string"},
+                "title": {"type": "string"},
+                "excerpt": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "existing_idea_titles": {"type": "array", "items": {"type": "string"}},
+    "max_seeds": {"type": "integer", "minimum": 1}
+  }
+}

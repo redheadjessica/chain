@@ -34,45 +34,53 @@ voice_spec: "{chain_home}/voice-spec.md"
 positioning_pillars: "{chain_home}/positioning-pillars.md"
 
 # --- Sources (your existing folders, read-only, mapped in place) ------------
-# `type` selects the connector that knows how to read that folder. See docs/sources.md.
-# Nothing here is relocated. A recommended layout for brand-new users is in
-# docs/sources.md, but it is only an example — use whatever structure you already have.
+# `type` is a free label for reading behavior (in V1 all text sources read alike).
+# `roles` are small, generic, domain-agnostic hints about the KIND of signal a source
+# carries — they tell Discover how to read it, and work for any field (a product PM's
+# applications and a studio's client questions are both role `questions`). Recommended
+# roles: published, drafts, questions, feedback, reviews, research, projects, offers,
+# audience-needs, idea-source, reference, changes, custom. A source may have several;
+# unknown roles are allowed. See docs/sources.md.
+#
+# Idea harvesting is generic: set `idea_marker` on ANY source that contains an
+# explicitly-marked idea list. Nothing here is relocated; the layout below is only an
+# example — use whatever structure you already have.
 sources:
-  - name: linkedin
-    type: linkedin_posts
-    path: ~/path/to/your/linkedin-posts
+  - name: published
+    type: text
+    path: ~/path/to/your/published-writing
+    roles: [published]
     include: ["*.txt", "*.md"]
     enabled: true
 
-  - name: longform
-    type: longform                   # Medium / Substack / essays
-    path: ~/path/to/your/writing
+  - name: questions
+    type: text                       # e.g. FAQs, client questions, application answers
+    path: ~/path/to/your/questions
+    roles: [questions, audience-needs]
     include: ["*.md", "*.txt"]
     enabled: true
 
-  - name: website
-    type: website
-    path: ~/path/to/your/site-content
-    include: ["*.md", "*.html", "*.txt"]
+  - name: feedback
+    type: text                       # reviews, testimonials, replies
+    path: ~/path/to/your/feedback
+    roles: [feedback, reviews]
+    include: ["*.md", "*.txt"]
     enabled: false
 
-  - name: applications
-    type: job_applications           # one subfolder per application; CHAIN harvests the
-    path: ~/path/to/your/applications  # writing-idea suggestions already in those files
-    include: ["*.md", "*.txt"]
-    exclude: ["**/_work/**", "**/*.pdf", "**/*.pages", "**/*.docx"]
-    idea_marker: "Writing ideas"     # configurable heading — no filename is hard-coded
-    enabled: true
-
   - name: project
-    type: repo                       # a project repo: "what changed -> public lesson"
+    type: repo
     path: ~/path/to/your/project
+    roles: [projects, changes]
     include: ["*.md", "CHANGELOG*"]
     enabled: false
 
-  - name: backlog
-    type: backlog                    # OPTIONAL hand-kept idea list, one source among many
-    path: "{chain_home}/backlog-notes.md"
+  # Any source may carry an explicitly-marked idea list — set its heading here.
+  - name: idea-notes
+    type: text
+    path: ~/path/to/your/notes
+    roles: [idea-source]
+    include: ["*.md"]
+    idea_marker: "Ideas"             # configurable heading — no filename is hard-coded
     enabled: false
 
 # --- Defaults for a run (overridable per run spec; see examples/runs/) -------

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-discoverer output",
+  "type": "object",
+  "required": ["seeds"],
+  "additionalProperties": false,
+  "properties": {
+    "seeds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["working_title", "premise", "lens", "evidence"],
+        "additionalProperties": true,
+        "properties": {
+          "working_title": {"type": "string"},
+          "premise": {"type": "string"},
+          "lens": {
+            "type": "string",
+            "enum": ["repeated-question", "converging-signal", "fresh-lesson",
+                     "old-meets-now", "latent-pov", "expansion-opportunity",
+                     "translation-opportunity", "coverage-guard"]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["source", "ref"],
+              "properties": {
+                "source": {"type": "string"},
+                "ref": {"type": "string"},
+                "why": {"type": "string"}
+              }
+            }
+          },
+          "primary_pillar": {"type": "string"},
+          "secondary_pillar": {"type": "string"},
+          "suggested_format": {"type": "string"},
+          "suggested_channel": {"type": "string"},
+          "timeliness": {"type": "string"},
+          "rationale": {"type": "string"}
+        }
+      }
+    },
+    "coverage_notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

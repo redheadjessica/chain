@@ -28,35 +28,54 @@ from pathlib import Path
 
 # --- source config ----------------------------------------------------------
 
+# `type` is a free label that selects reading behavior. In V1 all text sources read
+# the same way (walk + read), so these are conveniences, not a required ontology.
 KNOWN_TYPES = {
-    "linkedin_posts", "longform", "website", "job_applications", "repo", "backlog",
+    "text", "linkedin_posts", "longform", "website", "job_applications", "repo",
+    "backlog", "custom",
 }
-# Source types that carry explicit writing-idea suggestions to harvest.
-IDEA_HARVEST_TYPES = {"job_applications"}
-DEFAULT_IDEA_MARKER = "Writing ideas"
+
+# Generic, domain-agnostic ROLE hints — what kind of signal a source may carry. Small
+# and extensible: unknown roles are allowed (they pass straight to the Discover agent).
+# A source may have several. These are NOT industry-specific: a product person's
+# applications and a studio's client questions can both be role `questions`.
+RECOMMENDED_ROLES = (
+    "published", "drafts", "questions", "feedback", "reviews", "research",
+    "projects", "offers", "audience-needs", "idea-source", "reference",
+    "changes", "custom",
+)
+
+# A suggested default heading for explicitly-marked idea lists (users set their own).
+SUGGESTED_IDEA_MARKER = "Writing ideas"
 
 
 @dataclass
 class Source:
     name: str
-    type: str
-    path: str
+    type: str = "text"
+    path: str = ""
+    roles: list = field(default_factory=list)   # generic semantic hints (see above)
     include: list = field(default_factory=lambda: ["*.md", "*.txt"])
     exclude: list = field(default_factory=list)
-    idea_marker: str = DEFAULT_IDEA_MARKER
+    idea_marker: str = ""                        # set (any source) to harvest marked ideas
     enabled: bool = True
 
     @classmethod
     def from_dict(cls, d: dict) -> "Source":
         return cls(
             name=d["name"],
-            type=d["type"],
+            type=d.get("type", "text"),
             path=str(Path(str(d["path"])).expanduser()),
+            roles=list(d.get("roles") or []),
             include=list(d.get("include") or ["*.md", "*.txt"]),
             exclude=list(d.get("exclude") or []),
-            idea_marker=d.get("idea_marker") or DEFAULT_IDEA_MARKER,
+            idea_marker=(d.get("idea_marker") or "").strip(),
             enabled=bool(d.get("enabled", True)),
         )
+
+    @property
+    def primary_role(self) -> str:
+        return self.roles[0] if self.roles else "reference"
 
 
 @dataclass(frozen=True)
@@ -74,6 +93,7 @@ class HarvestedIdea:
     source_ref: str    # the file the idea came from (rel_path)
     working_title: str
     premise: str
+    roles: tuple = ()  # the source's roles — retained so the backlog keeps context
 
 
 # --- walking ----------------------------------------------------------------
@@ -145,7 +165,7 @@ def _title_from(item: str) -> str:
     return " ".join(words).rstrip(".,;:")
 
 
-def harvest_ideas(text: str, marker: str = DEFAULT_IDEA_MARKER):
+def harvest_ideas(text: str, marker: str = SUGGESTED_IDEA_MARKER):
     """Extract writing-idea suggestions listed under a heading containing `marker`.
     Deterministic: finds the marker heading, then collects the list items beneath it
     until the next heading. Returns a list of (working_title, premise) tuples."""
@@ -172,8 +192,10 @@ def harvest_ideas(text: str, marker: str = DEFAULT_IDEA_MARKER):
 
 
 def harvest_source(source: Source):
-    """Yield HarvestedIdea for every idea found in an idea-harvest source."""
-    if source.type not in IDEA_HARVEST_TYPES:
+    """Yield HarvestedIdea for every explicitly-marked idea in a source. Harvesting is
+    driven by a configured `idea_marker` on ANY source — not by a special connector.
+    A job-applications folder is just one source that happens to carry a marked list."""
+    if not source.idea_marker:
         return
     for abs_path, rel in walk_source(source):
         try:
@@ -181,4 +203,4 @@ def harvest_source(source: Source):
         except (OSError, UnicodeDecodeError):
             continue
         for title, premise in harvest_ideas(text, source.idea_marker):
-            yield HarvestedIdea(source.name, rel, title, premise)
+            yield HarvestedIdea(source.name, rel, title, premise, tuple(source.roles))

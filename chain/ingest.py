@@ -26,7 +26,7 @@ from datetime import date
 from pathlib import Path
 
 from .editorial_library import EditorialLibrary, join_multi
-from .sources import IDEA_HARVEST_TYPES, Source, harvest_ideas, index_source, walk_source
+from .sources import Source, harvest_ideas, index_source
 
 LEDGER_FIELDS = ["source", "rel_path", "sha256", "size", "last_ingested", "kind",
                  "ideas_emitted", "note"]
@@ -120,7 +120,7 @@ def run_ingest(config: dict, *, today=None) -> IngestSummary:
                 continue  # unchanged file: no work, no re-emitted ideas
 
             emitted = []
-            if source.type in IDEA_HARVEST_TYPES:
+            if source.idea_marker:   # harvest marked ideas from ANY source, generically
                 try:
                     text = Path(idx.path).read_text(encoding="utf-8")
                 except (OSError, UnicodeDecodeError):
@@ -131,8 +131,9 @@ def run_ingest(config: dict, *, today=None) -> IngestSummary:
                         summary.exact_dupes_skipped += 1
                         continue
                     fields = {
-                        "source_type": "job-application",
-                        "source_ref": idx.rel_path,
+                        # generic origin + role, no domain assumption:
+                        "source_type": f"harvest:{source.primary_role}",
+                        "source_ref": f"{source.name}:{idx.rel_path}",
                         "status": "proposed",
                         "intended_channel": "neutral",
                     }
@@ -147,7 +148,7 @@ def run_ingest(config: dict, *, today=None) -> IngestSummary:
                         summary.near_dupes_flagged += 1
                         summary.flagged.append((idea_id, match_id))
 
-            kind_label = "idea-harvest" if source.type in IDEA_HARVEST_TYPES else "corpus"
+            kind_label = "idea-harvest" if source.idea_marker else "corpus"
             ledger.upsert(source.name, idx.rel_path, idx.sha256, idx.size,
                           today, kind_label, emitted)
             summary.new_or_changed += 1
