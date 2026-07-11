@@ -157,7 +157,7 @@ owned by [`chain/editorial_library.py`](../chain/editorial_library.py):
   history file — never one overloaded cell. See [future-work.md](future-work.md).
 
 **Same idea vs new idea (brief-development rule):** when a short post becomes a
-long-form article, or an article gains a companion, those Pieces **share one
+long-form piece, or a long-form piece gains a companion, those Pieces **share one
 `idea_id`** — they're new expressions of one idea. A **new** Idea is created only when
 the work introduces a materially different *premise*. Brief development makes this call
 explicitly and records the reason when it forks a new idea.
@@ -192,7 +192,7 @@ The seeds and their premises come from the LLM; selection does not re-score seed
 so it is not a quality ranking — only a dedup-and-spread.
 
 **Directed mode** (you provide input — a premise, notes, a partial draft, an
-application answer, a file, a URL, a backlog idea, a short post to expand, an article
+application answer, a file, a URL, a backlog idea, a short-form piece to expand, a long-form piece
 needing a companion, or a custom request): the input is normalized into an idea (new or
 matched) and **enters at the brief stage**. It does not run the sweep.
 
@@ -204,7 +204,7 @@ Both converge on **Brief → Draft → Evaluate → Finalize**.
 
 The brief is the pivot that lets one writer/evaluator serve every channel:
 
-- `format`: short_post · long_post · article · companion_post · custom
+- `format`: short_form · long_form · companion_post · custom
 - `channel`: linkedin · medium · substack · website · neutral
 - `target_length`, `audience`
 - `relationship`: standalone, or expands / condenses / promotes / follows-up another piece
@@ -225,7 +225,7 @@ not a refactor.
 - **`chain-evaluator`** (never rewrites) — the honest broker. Scores **Positioning
   Impact** (primary) and **Voice**; runs self-pushback and a gold/negative exemplar
   comparison; owns the packet's candid verdict. Runs per piece, then **once in bundle
-  mode** for an article+companion pair. Bundle coherence is a *mode of this same
+  mode** for a long_form+companion pair. Bundle coherence is a *mode of this same
   evaluator*, not another agent.
 - **`lint_draft.py`** — **mechanical compliance only**: banned phrases/patterns,
   punctuation, length ranges, paragraph structure, external-link rules, hashtag counts,
@@ -256,24 +256,26 @@ is advisory only in V1 and never drives scoring.
 
 ## Bundles: long-form + companion, first class
 
-A run can emit `{article, companion_post}` — two Pieces sharing one `idea_id`, linked
+A run can emit `{long_form, companion_post}` — two Pieces sharing one `idea_id`, linked
 `companion-of`. The companion is **not a summary**; its brief carries a `companion_angle`
 (one observation · the origin story · the central tension · one example · why it was
 written · a related distinct angle). The evaluator judges each piece independently, then
-in **bundle mode**: coherence, whether the companion drives interest in the article,
+in **bundle mode**: coherence, whether the companion drives interest in the long-form piece,
 whether it stands alone, whether the two are unnecessarily repetitive, channel fit.
 Bounded: two members in V1.
 
 ---
 
-## The packet
+## The draft packet
 
-Per piece: the paste-ready text, a scorecard (Positioning Impact + Voice, must-fixes
-resolved), open questions, and the **editorial confidence section** authored by the
-evaluator (Why CHAIN chose this · What this communicates about you · Why you have
-standing to say it · Reasonable publication risk · Editorial verdict). Candid and
-evidence-based; never instructed to persuade you a piece is good. A bundle adds a pair
-section. Full anatomy in [packet.md](packet.md).
+Each single draft produces a **draft packet** (a long-form + companion pair will later
+produce a **bundle packet**). It carries the paste-ready draft, a scorecard (Voice +
+Positioning Impact, must-fixes applied, declined suggestions with reasons), Questions for
+you, and the **editorial confidence section** authored by the evaluator (Why CHAIN chose
+this · What this communicates · Why you have standing to say it · Reasonable publication
+risk · Editorial verdict). Candid and evidence-based; never instructed to persuade you a
+draft is good. Full anatomy in [packet.md](packet.md); a synthetic example is in
+[examples/sample-draft-packet.md](../examples/sample-draft-packet.md).
 
 ---
 
@@ -284,8 +286,8 @@ is allowed, whether long-form auto-receives a companion, and whether ideas come 
 Discover, the backlog, a user input, or a mix. The **first proof-of-concept preset**
 produces **five short/medium LinkedIn-ready pieces**
 ([examples/runs/five-linkedin.yaml](../examples/runs/five-linkedin.yaml)). The engine
-also supports (but the first run doesn't require) a directed premise, one article, an
-article+companion bundle, and expanding an existing piece.
+also supports (but the first run doesn't require) a directed premise, one long-form piece, a
+long_form+companion bundle, and expanding an existing piece.
 
 ---
 

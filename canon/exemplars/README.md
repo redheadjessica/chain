@@ -14,7 +14,7 @@ corpus is personal. You replace the synthetic exemplars with your own.
 ## File shape (when added)
 
 ```
-# Exemplar: <short label>  ·  channel: linkedin  ·  format: short_post
+# Exemplar: <short label>  ·  channel: linkedin  ·  format: short_form
 **Status: GOLD | NEGATIVE.**
 
 **Why it's gold / why it fails:**

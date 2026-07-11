@@ -64,7 +64,7 @@ Each seed cites exactly one lens. `coverage-guard` findings go in `coverage_note
       "evidence": [{"source": "name", "ref": "path", "why": "what in it supports this"}],
       "primary_pillar": "a pillar id (or \"\")",
       "secondary_pillar": "a pillar id (or \"\")",
-      "suggested_format": "short_post|long_post|article|companion_post|custom|undecided",
+      "suggested_format": "short_form|long_form|companion_post|custom|undecided",
       "suggested_channel": "linkedin|medium|substack|website|neutral",
       "timeliness": "evergreen|time-sensitive",
       "rationale": "why it is worth writing now, in one sentence"

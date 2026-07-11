@@ -31,4 +31,4 @@ sources:
 
 defaults:
   channel: neutral
-  format: short_post
+  format: short_form

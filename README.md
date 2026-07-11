@@ -48,10 +48,13 @@ the same rows.
 
 ## Status
 
-**Scaffold (v0.0.1).** The privacy firewall, configuration pattern, editorial-library
-data model + helper, synthetic demo persona, docs, and integrity/path-safety tests are
-in place. The Discover / Draft / Evaluate / Finalize agents are next — see
-[docs/architecture.md](docs/architecture.md).
+**Early (v0.0.1).** In place: the privacy firewall, config pattern, editorial library,
+idempotent source intake + idea harvesting, the domain-agnostic Discover synthesis
+(portable `chain-discoverer`), and the production spine **Brief → Draft → Evaluate →
+bounded Finalize** (portable `chain-writer` / `chain-evaluator`, deterministic
+`lint_draft`, private draft packets). Validated across two domains (a product persona and
+a sugaring studio). Next: long-form + companion **bundles**, then the five-output
+autonomous run. See [docs/architecture.md](docs/architecture.md).
 
 ## Quickstart
 

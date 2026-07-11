@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-evaluator output",
+  "type": "object",
+  "required": ["voice_score", "positioning_score", "findings", "confidence", "verdict"],
+  "properties": {
+    "voice_score": {"type": "integer", "minimum": 1, "maximum": 5},
+    "positioning_score": {"type": "integer", "minimum": 1, "maximum": 5},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "quote", "why"],
+        "properties": {
+          "severity": {"type": "string", "enum": ["must-fix", "consideration"]},
+          "quote": {"type": "string"},
+          "why": {"type": "string"}
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "required": ["why_chosen", "what_communicates", "standing", "risk"],
+      "properties": {
+        "why_chosen": {"type": "string"},
+        "what_communicates": {"type": "string"},
+        "standing": {"type": "string"},
+        "risk": {"type": "string"}
+      }
+    },
+    "comparison_note": {"type": "string"},
+    "self_pushback": {"type": "string"},
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "Strong candidate to publish",
+        "Good candidate with one issue to review",
+        "Interesting but somewhat exposed",
+        "Strategically useful, but currently too generic",
+        "Do not publish this version"
+      ]
+    }
+  }
+}

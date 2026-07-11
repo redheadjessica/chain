@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-writer draft output",
+  "type": "object",
+  "required": ["draft_text"],
+  "properties": {
+    "draft_text": {"type": "string", "minLength": 1},
+    "links_used": {
+      "type": "array",
+      "items": {"type": "object", "required": ["anchor", "url"],
+                "properties": {"anchor": {"type": "string"}, "url": {"type": "string"}}}
+    },
+    "open_questions": {"type": "array", "items": {"type": "string"}}
+  }
+}

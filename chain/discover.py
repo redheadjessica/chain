@@ -169,11 +169,11 @@ def seeds_to_backlog(selected: list, library: EditorialLibrary, *, today=None) -
     return pairs
 
 
-_DEFAULT_LENGTHS = {"short_post": 150, "long_post": 400, "article": 1200,
-                    "companion_post": 150}
+_DEFAULT_LENGTHS = {"short_form": 150, "long_form": 900,
+                                        "companion_post": 150}
 
 
-def develop_briefs(pairs: list, *, default_channel="neutral", default_format="short_post",
+def develop_briefs(pairs: list, *, default_channel="neutral", default_format="short_form",
                    audience="") -> list:
     """Assemble briefs from selected (idea_id, seed) pairs. Deterministic packaging: the
     creative fields already came from the seed; this fills the output spec."""

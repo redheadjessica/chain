@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-writer revision output",
+  "type": "object",
+  "required": ["final_text"],
+  "properties": {
+    "final_text": {"type": "string", "minLength": 1},
+    "changes_applied": {"type": "array", "items": {"type": "string"}},
+    "declined": {
+      "type": "array",
+      "items": {"type": "object", "required": ["finding", "reason"],
+                "properties": {"finding": {"type": "string"}, "reason": {"type": "string"}}}
+    },
+    "open_questions": {"type": "array", "items": {"type": "string"}}
+  }
+}

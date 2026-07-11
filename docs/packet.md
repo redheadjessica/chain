@@ -1,16 +1,21 @@
-# CHAIN — The Packet
+# CHAIN — The Draft Packet
 
-Every finalized piece arrives as a **packet**: the paste-ready text plus a candid,
+Every finalized draft arrives as a **draft packet**: the paste-ready text plus a candid,
 evidence-based case for (or against) publishing. It supports the publication decision
 without becoming a hype machine. The **evaluator** authors the judgment sections, so
-the writer never grades its own work.
+the writer never grades its own work. (A long-form + companion pair will later produce a
+**bundle packet** — the next slice, not this one.)
+
+A committed synthetic example lives at
+[`examples/sample-draft-packet.md`](../examples/sample-draft-packet.md); real draft
+packets stay under the private `chain_home/workspace/`.
 
 ## Anatomy
 
 ```
 # <working title> — <format> · <channel>
 
-## The piece
+## The draft
 <paste-ready text>
 (channel-conditional extras, e.g. LinkedIn: suggested first comment for any link,
  suggested posting window)
@@ -61,9 +66,9 @@ the evaluator has drifted toward flattery — the rubric is tuned against that.
 
 ## Bundles
 
-An `{article, companion_post}` bundle adds a **pair section**: does the companion
-create interest in the article, does it stand alone, are the two unnecessarily
+An `{long_form + companion_post}` bundle adds a **pair section**: does the companion
+create interest in the long-form piece, does it stand alone, are the two unnecessarily
 repetitive, does each fit its channel. Authored by the evaluator's bundle mode.
 
-*(A synthetic sample packet will live here once the Finalize stage is built; real
-packets quote private sources and stay in the gitignored `chain_home/workspace/`.)*
+The bundle packet ships in the bundle slice; the single-draft packet above is built now
+([`chain/produce.py`](../chain/produce.py)).

@@ -6,14 +6,14 @@
 # and packet usefulness before exercising every format at once.
 #
 # The engine is NOT limited to this shape — see the sibling presets (to come) for a
-# directed premise, a long-form article, an article+companion bundle, and expanding
+# directed premise, a long-form piece, a long-form+companion bundle, and expanding
 # an existing piece. Change any field below to reshape a run.
 
 name: five-linkedin
 count: 5
 
 idea_source: discover        # discover | backlog | user | mixed
-formats: [short_post]        # allowed formats for this run
+formats: [short_form]        # allowed formats for this run
 default_channel: linkedin
 allow_longform: false
 auto_companion: false        # when true, each long-form piece also gets a companion

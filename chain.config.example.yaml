@@ -86,4 +86,4 @@ sources:
 # --- Defaults for a run (overridable per run spec; see examples/runs/) -------
 defaults:
   channel: linkedin
-  format: short_post
+  format: short_form

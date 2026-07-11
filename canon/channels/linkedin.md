@@ -6,7 +6,7 @@ writer and evaluator). Only the mechanical rules are linted.
 
 ## Mechanical (linted)
 
-- Length: ~1,300–3,000 characters for a standard post; short_post leaner.
+- Length: ~1,300–3,000 characters for a standard post; short_form leaner.
 - First ~2 lines carry the post before the "see more" fold — the linter checks that
   a non-trivial first line exists, **not** whether it's a good hook (that's judgment).
 - External links in the body suppress reach → **flag**; route links to the first

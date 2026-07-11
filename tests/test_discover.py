@@ -76,7 +76,7 @@ class TestDiscover(unittest.TestCase):
     def test_seeds_to_backlog_and_briefs(self):
         lib = self._lib()
         seeds = [_seed("New idea", "A genuinely new premise.", "translation-opportunity",
-                       "educates-clients", suggested_format="short_post",
+                       "educates-clients", suggested_format="short_form",
                        suggested_channel="instagram", rationale="clients keep asking")]
         pairs = seeds_to_backlog(seeds, lib, today="2026-03-01")
         self.assertEqual(len(pairs), 1)
@@ -84,7 +84,7 @@ class TestDiscover(unittest.TestCase):
         self.assertEqual(idea["source_type"], "discover")
         self.assertEqual(idea["primary_pillar"], "educates-clients")
         briefs = develop_briefs(pairs, default_channel="neutral")
-        self.assertEqual(briefs[0]["format"], "short_post")
+        self.assertEqual(briefs[0]["format"], "short_form")
         self.assertEqual(briefs[0]["why_chosen"]["lens"], "translation-opportunity")
 
 

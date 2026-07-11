@@ -21,7 +21,7 @@ class TestOrphanedReferences(unittest.TestCase):
         """One idea -> many pieces, discovered by filtering pieces.csv."""
         lib = self._lib()
         iid = lib.add_idea("Bundle idea", "Premise.", today="2026-01-01")
-        art = lib.add_piece(iid, fmt="article", channel="medium")
+        art = lib.add_piece(iid, fmt="long_form", channel="medium")
         comp = lib.add_piece(iid, fmt="companion_post", channel="linkedin",
                              parent_piece_id=art, relation_type="companion-of")
         got = {p["piece_id"] for p in lib.pieces_for_idea(iid)}
@@ -31,7 +31,7 @@ class TestOrphanedReferences(unittest.TestCase):
     def test_piece_with_unknown_idea_id_is_orphan(self):
         lib = self._lib()
         lib.pieces.append({"piece_id": "PIECE-0001", "idea_id": "IDEA-9999",
-                           "format": "short_post", "channel": "linkedin",
+                           "format": "short_form", "channel": "linkedin",
                            "status": "draft"})
         self.assertIn("orphaned-reference", self._codes(lib))
 
@@ -68,7 +68,7 @@ class TestOrphanedReferences(unittest.TestCase):
     def test_clean_library_has_no_errors(self):
         lib = self._lib()
         iid = lib.add_idea("Idea", "Premise.", today="2026-01-01")
-        art = lib.add_piece(iid, fmt="article", channel="medium")
+        art = lib.add_piece(iid, fmt="long_form", channel="medium")
         lib.add_piece(iid, fmt="companion_post", channel="linkedin",
                       parent_piece_id=art, relation_type="companion-of")
         self.assertEqual(self._codes(lib), set())

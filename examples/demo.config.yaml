@@ -38,4 +38,4 @@ sources:
 
 defaults:
   channel: linkedin
-  format: short_post
+  format: short_form
