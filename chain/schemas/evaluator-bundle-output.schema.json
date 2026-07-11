@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chain-evaluator bundle-mode output",
+  "description": "The evaluator's assessment of a long-form + companion pair (V1 bundle = exactly two drafts).",
+  "type": "object",
+  "required": ["companion_creates_interest", "companion_stands_alone",
+               "unnecessarily_repetitive", "channel_fit", "coherent_idea",
+               "companion_angle", "verdict"],
+  "properties": {
+    "companion_creates_interest": {"type": "string"},
+    "companion_stands_alone": {"type": "string"},
+    "unnecessarily_repetitive": {"type": "string"},
+    "channel_fit": {"type": "string"},
+    "coherent_idea": {"type": "string"},
+    "companion_angle": {
+      "type": "string",
+      "description": "the intentional angle the companion uses (origin-story, central-tension, one-example, related-observation, why-it-was-written)"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "why"],
+        "properties": {
+          "severity": {"type": "string", "enum": ["must-fix", "consideration"]},
+          "quote": {"type": "string"},
+          "why": {"type": "string"}
+        }
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "Strong candidate to publish",
+        "Good candidate with one issue to review",
+        "Interesting but somewhat exposed",
+        "Strategically useful, but currently too generic",
+        "Do not publish this version"
+      ]
+    }
+  }
+}

@@ -35,12 +35,20 @@ a piece whose pillars are about a local service business.
 
 ## Assess and cite
 
-Judge editorial quality, specificity, standing (does the author have real grounds to say
-this, per the sources?), reasonable publication risk, and fit for the format/channel.
-**Cite the exact passage** for every finding. Mark each finding `must-fix` (violates the
-brief/voice/truth, or misses the format/channel) or `consideration` (would improve,
-writer's call). Do not manufacture findings — an empty must-fix list on a strong draft is
-a good outcome. Compare against provided positive/negative exemplars when available.
+Judge editorial quality, specificity, standing, reasonable publication risk, and fit for
+the format/channel. Give every finding a stable **`id`** (`F1`, `F2`, …) and **cite the
+exact passage** (`quote`) it is about — the writer references these ids and quotes to
+revise surgically. Mark each `must-fix` (violates the brief/voice/truth, or misses the
+format/channel) or `consideration` (would improve, writer's call). Do not manufacture
+findings — an empty must-fix list on a strong draft is a good outcome. Compare against
+provided positive/negative exemplars when available.
+
+**Standing is domain-scaled.** "Why you have standing" means the configured sources
+reasonably support the piece — direct experience, repeatedly observed customer questions,
+the business's own service or process, documented project work, published research, lived
+experience, or an explicitly framed personal opinion. For a service business, ordinary
+first-party expertise is enough. **Do not inflate it into a claim of exceptional
+authority or force the author into a thought-leadership posture.**
 
 ## The confidence section (candid, never persuasive)
 
@@ -59,7 +67,7 @@ Fill each honestly; "Do not publish this version" and "too generic" are healthy 
 {
   "voice_score": 1-5,
   "positioning_score": 1-5,
-  "findings": [{"severity": "must-fix|consideration", "quote": "exact passage", "why": "..."}],
+  "findings": [{"id": "F1", "severity": "must-fix|consideration", "quote": "exact passage", "why": "..."}],
   "confidence": {"why_chosen": "...", "what_communicates": "...", "standing": "...", "risk": "..."},
   "comparison_note": "vs exemplars, if any",
   "self_pushback": "why my scores might be wrong",
@@ -67,4 +75,24 @@ Fill each honestly; "Do not publish this version" and "too generic" are healthy 
 }
 ```
 
-Return only the JSON object.
+## Bundle mode (`mode: "bundle"`)
+
+When the input has `mode: "bundle"`, you are given a **long-form draft** and its
+**companion draft** (both share one Idea). Do not re-score the individual pieces — assess
+the **pair**. Return JSON only:
+
+```json
+{
+  "companion_creates_interest": "does the companion make a reader want the long-form piece?",
+  "companion_stands_alone": "does it give value even to someone who never clicks?",
+  "unnecessarily_repetitive": "do the two overlap more than they should (esp. the openings)?",
+  "channel_fit": "does each fit its own channel?",
+  "coherent_idea": "do the two communicate one coherent idea?",
+  "companion_angle": "origin-story | central-tension | one-example | related-observation | why-it-was-written",
+  "findings": [{"severity": "must-fix|consideration", "quote": "...", "why": "..."}],
+  "verdict": "one of the five verdicts, applied to the pair"
+}
+```
+
+A companion that merely summarizes the long-form piece is a defect — say so. Return only
+the JSON object.

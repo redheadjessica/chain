@@ -25,9 +25,9 @@ Grow it out, and let us do the rest. 🌱
 ## Scorecard
 - Voice: 4/5
 - Positioning Impact: 5/5
-- Must-fixes applied:
+- Findings addressed (by id):
 - None
-- Evaluator suggestions declined by the writer:
+- Findings declined by the writer:
 - None
 - Questions for you:
 - None

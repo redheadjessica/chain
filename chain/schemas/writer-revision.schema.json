@@ -1,15 +1,20 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "chain-writer revision output",
+  "description": "Surgical revision. Every evaluator finding is either addressed or declined, keyed by its stable finding_id, so preservation checking can allow exactly the implicated passages to change.",
   "type": "object",
   "required": ["final_text"],
   "properties": {
     "final_text": {"type": "string", "minLength": 1},
-    "changes_applied": {"type": "array", "items": {"type": "string"}},
+    "addressed": {
+      "type": "array",
+      "items": {"type": "object", "required": ["finding_id", "change"],
+                "properties": {"finding_id": {"type": "string"}, "change": {"type": "string"}}}
+    },
     "declined": {
       "type": "array",
-      "items": {"type": "object", "required": ["finding", "reason"],
-                "properties": {"finding": {"type": "string"}, "reason": {"type": "string"}}}
+      "items": {"type": "object", "required": ["finding_id", "reason"],
+                "properties": {"finding_id": {"type": "string"}, "reason": {"type": "string"}}}
     },
     "open_questions": {"type": "array", "items": {"type": "string"}}
   }

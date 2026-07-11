@@ -40,17 +40,27 @@ on), `voice_spec`, `positioning_pillars`, `rules` (format + channel).
 
 ## Revise mode (you are a surgeon, not an editor)
 
-Input adds `findings` from the evaluator (each `severity` must-fix|consideration, with a
-cited `quote`).
+Input adds `findings` from the evaluator — each with a stable `id` (F1, F2, …), a
+`severity` (must-fix|consideration), and the cited `quote`.
 
+- Account for **every** finding: either **address** it or **decline** it, by its `id`.
 - Address every **must-fix**. Apply a **consideration** only if you agree it improves the
-  piece.
-- Touch **only** the passages the findings cite. Everything else survives **verbatim** —
-  do not smooth, re-balance, or re-polish untouched lines. A revision that got blander is
-  a failure.
-- If a finding would flatten or damage the piece, **decline it** and record why — that is
-  a valid outcome that goes to the author.
-- Return `final_text`, `changes_applied` (list), `declined` (`[{finding, reason}]`),
-  `open_questions`.
+  piece; otherwise decline it.
+- Touch **only** the passages of the findings you address. Everything else survives
+  **verbatim** — do not smooth, re-balance, or re-polish untouched lines (a preservation
+  lint enforces this: changing an uncited passage is an error). A revision that got
+  blander is a failure.
+- If a finding would flatten or damage the piece, **decline it** with a reason — a valid
+  outcome that goes to the author.
+- Return `final_text`, `addressed` (`[{finding_id, change}]`), `declined`
+  (`[{finding_id, reason}]`), `open_questions`.
+
+## Companion mode (a companion_post draft)
+
+If the brief's `format` is `companion_post`, you are writing a short companion to a
+long-form piece (given as `relationship`/`why_chosen`). **Do not summarize the long-form
+piece.** Take the single `companion_angle` the brief names (origin story, central tension,
+one example, or a related observation) and make it stand on its own. Do not reuse the
+long-form piece's opening line.
 
 Return only the JSON object your mode requires.

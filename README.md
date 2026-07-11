@@ -52,9 +52,11 @@ the same rows.
 idempotent source intake + idea harvesting, the domain-agnostic Discover synthesis
 (portable `chain-discoverer`), and the production spine **Brief → Draft → Evaluate →
 bounded Finalize** (portable `chain-writer` / `chain-evaluator`, deterministic
-`lint_draft`, private draft packets). Validated across two domains (a product persona and
-a sugaring studio). Next: long-form + companion **bundles**, then the five-output
-autonomous run. See [docs/architecture.md](docs/architecture.md).
+`lint_draft`, finding-id traceability, preservation-mode revision, private draft packets),
+and **long-form + companion bundles** (evaluator bundle mode, one bundle packet). Validated
+live across two domains (a product persona and a sugaring studio), including the full
+evaluator → surgical-revision → preservation-lint loop. Next: the five-output autonomous
+run. See [docs/architecture.md](docs/architecture.md).
 
 ## Quickstart
 

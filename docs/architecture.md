@@ -234,8 +234,11 @@ not a refactor.
   evaluator's job.** Channel/format rule packs are selected by the brief; LinkedIn is
   one pack.
 
-**Bounded revision:** exactly one Evaluate → (conditional) Revise cycle, then ship with
-remaining concerns as flags.
+**Bounded revision:** exactly one Evaluate → (conditional) Revise cycle. Findings carry
+stable ids; the writer declares, per id, what it `addressed` and what it `declined`, and
+the preservation lint uses that mapping so only the addressed passages may change. After a
+revision, a single **re-evaluation reads** the revised draft (not another revision cycle)
+so the packet's scores and verdict describe what you would actually publish.
 
 ---
 

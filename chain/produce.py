@@ -7,10 +7,11 @@ bounded revision cycle, runs preservation-mode lint on the revision, and assembl
 private **draft packet** into chain_home/workspace. It writes nothing public and copies
 no full source library — only the run's own draft, baseline, and packet.
 
-Division of responsibilities is enforced here:
-  * lint_draft = mechanical only (never quality judgment)
-  * writer     = drafts / surgically revises; may decline a finding with a reason
-  * evaluator  = scores + candid verdict; never rewrites
+Finding-to-revision traceability is explicit and mechanical:
+  * each evaluator finding carries a stable `id` (F1, F2, ...);
+  * the writer revision declares, per id, what it `addressed` and what it `declined`;
+  * preservation lint uses that mapping — only the passages of ADDRESSED findings may
+    change; everything else (including declined findings' passages) must survive.
 
 Baseline draft (`draft-v1.md`) and the brief are preserved so a later learning slice can
 reconcile against the user's published version. No learning happens here.
@@ -24,7 +25,7 @@ import json
 from datetime import date
 from pathlib import Path
 
-from .lint_draft import has_errors, lint_draft
+from .lint_draft import lint_draft
 
 VERDICTS = {
     "Strong candidate to publish",
@@ -48,9 +49,17 @@ def validate_draft(out) -> dict:
 def validate_revision(out) -> dict:
     if not isinstance(out, dict) or not isinstance(out.get("final_text"), str) or not out["final_text"].strip():
         raise ValueError("writer revision output needs a non-empty 'final_text'")
-    out.setdefault("changes_applied", [])
-    out.setdefault("declined", [])
+    out.setdefault("addressed", [])   # [{finding_id, change}]
+    out.setdefault("declined", [])    # [{finding_id, reason}]
     out.setdefault("open_questions", [])
+    for a in out["addressed"]:
+        if "finding_id" not in a:
+            raise ValueError("each addressed item needs a finding_id")
+        a.setdefault("change", "")
+    for d in out["declined"]:
+        if "finding_id" not in d:
+            raise ValueError("each declined item needs a finding_id")
+        d.setdefault("reason", "")
     return out
 
 
@@ -60,9 +69,10 @@ def validate_evaluation(out) -> dict:
             raise ValueError(f"evaluator output missing '{k}'")
     if out["verdict"] not in VERDICTS:
         raise ValueError(f"unknown verdict: {out['verdict']!r}")
-    for f in out["findings"]:
+    for i, f in enumerate(out["findings"]):
         if f.get("severity") not in ("must-fix", "consideration"):
             raise ValueError("each finding needs severity must-fix|consideration")
+        f.setdefault("id", f"F{i + 1}")   # stable finding id, backfilled if absent
     c = out["confidence"]
     for k in ("why_chosen", "what_communicates", "standing", "risk"):
         c.setdefault(k, "")
@@ -90,19 +100,22 @@ def run_production(brief, *, config, writer_fn, evaluator_fn, voice_spec_text=""
         "positioning_pillars": pillars, "sources": source_excerpts, "rules": rules,
     }))
     draft_text = draft["draft_text"]
-    lint_draft_findings, stats1 = lint_draft(draft_text, fmt=fmt, channel=channel, overrides=overrides)
+    _, stats1 = lint_draft(draft_text, fmt=fmt, channel=channel, overrides=overrides)
 
     # 2. Evaluate (once)
     ev = validate_evaluation(evaluator_fn({
-        "brief": brief, "draft_text": draft_text, "voice_spec": voice_spec_text,
-        "positioning_pillars": pillars, "format": fmt, "channel": channel,
+        "mode": "evaluate", "brief": brief, "draft_text": draft_text,
+        "voice_spec": voice_spec_text, "positioning_pillars": pillars,
+        "format": fmt, "channel": channel,
     }))
+    fid_quote = {f["id"]: f.get("quote", "") for f in ev["findings"]}
     must_fixes = [f for f in ev["findings"] if f["severity"] == "must-fix"]
     needs_revision = bool(must_fixes) or ev["voice_score"] < 4 or ev["positioning_score"] < 4
 
-    # 3. Bounded revision (exactly one cycle)
-    declined, changes_applied, final_text = [], [], draft_text
-    lint_final, preservation = lint_draft_findings, []
+    # 3. Bounded revision (exactly one cycle), with mapping-based preservation
+    addressed, declined, final_text = [], [], draft_text
+    preservation = []
+    ev_final = ev            # the scores/verdict shown to the user
     if needs_revision:
         rev = validate_revision(writer_fn({
             "mode": "revise", "brief": brief, "draft_text": draft_text,
@@ -110,33 +123,44 @@ def run_production(brief, *, config, writer_fn, evaluator_fn, voice_spec_text=""
             "positioning_pillars": pillars, "rules": rules,
         }))
         final_text = rev["final_text"]
+        addressed = rev["addressed"]
         declined = rev["declined"]
-        changes_applied = rev["changes_applied"]
         draft["open_questions"] = draft["open_questions"] + rev["open_questions"]
-        touchpoints = [f.get("quote", "") for f in must_fixes]
+        # only ADDRESSED findings' cited passages may change
+        touchpoints = [fid_quote.get(a["finding_id"], "") for a in addressed]
         preservation, _ = lint_draft(final_text, fmt=fmt, channel=channel,
                                      overrides=overrides, prev=draft_text,
                                      touchpoints=touchpoints)
-        lint_final, _ = lint_draft(final_text, fmt=fmt, channel=channel, overrides=overrides)
+        # Bounded re-evaluation of the revised draft (a read, NOT another revision) so
+        # the packet's scores/verdict describe what the user would actually publish.
+        ev_final = validate_evaluation(evaluator_fn({
+            "mode": "reevaluate", "brief": brief, "draft_text": final_text,
+            "voice_spec": voice_spec_text, "positioning_pillars": pillars,
+            "format": fmt, "channel": channel,
+        }))
+    lint_final, _ = lint_draft(final_text, fmt=fmt, channel=channel, overrides=overrides)
 
     # 4. Write baseline + final + packet (private workspace)
-    out_dir = Path(config["workspace_dir"]) / run_id / brief.get("idea_id", "idea")
+    slug = brief.get("slug", fmt)
+    out_dir = Path(config["workspace_dir"]) / run_id / brief.get("idea_id", "idea") / slug
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "draft-v1.md").write_text(draft_text, encoding="utf-8")   # learning baseline
     (out_dir / "final.md").write_text(final_text, encoding="utf-8")
-    packet_md = build_packet(brief, final_text, ev, declined, changes_applied,
-                             stats1, lint_final + preservation, source_excerpts,
+    packet_md = build_packet(brief, final_text, ev_final, addressed, declined,
+                             lint_final + preservation, source_excerpts,
                              draft["open_questions"])
     (out_dir / "packet.md").write_text(packet_md, encoding="utf-8")
 
     return {
-        "idea_id": brief.get("idea_id", ""),
-        "format": fmt, "channel": channel,
-        "verdict": ev["verdict"],
-        "voice_score": ev["voice_score"], "positioning_score": ev["positioning_score"],
-        "must_fixes": len(must_fixes), "revised": needs_revision,
-        "changes_applied": changes_applied, "declined": declined,
+        "idea_id": brief.get("idea_id", ""), "format": fmt, "channel": channel,
+        "verdict": ev_final["verdict"],
+        "voice_score": ev_final["voice_score"], "positioning_score": ev_final["positioning_score"],
+        "verdict_pre_revision": ev["verdict"], "revised": needs_revision,
+        "findings": ev["findings"], "must_fixes": len(must_fixes),
+        "addressed": addressed, "declined": declined,
+        "final_text": final_text, "draft_text": draft_text,
         "lint_errors_final": sum(1 for f in lint_final + preservation if f["level"] == "error"),
+        "preservation_findings": preservation,
         "packet_path": str(out_dir / "packet.md"),
         "baseline_path": str(out_dir / "draft-v1.md"),
         "final_path": str(out_dir / "final.md"),
@@ -145,15 +169,16 @@ def run_production(brief, *, config, writer_fn, evaluator_fn, voice_spec_text=""
 
 # --- packet assembly (user-facing "draft packet") ---------------------------
 
-def build_packet(brief, final_text, ev, declined, changes_applied, stats,
+def build_packet(brief, final_text, ev, addressed, declined,
                  lint_final, source_excerpts, open_questions) -> str:
     c = ev["confidence"]
     refs = brief.get("why_chosen", {}).get("evidence", []) or source_excerpts
     ref_lines = "\n".join(
         f"- {e.get('source', '')}:{e.get('ref', '')}" for e in refs) or "- (none recorded)"
+    addressed_lines = "\n".join(
+        f"- {a['finding_id']}: {a.get('change', '')}" for a in addressed) or "- None"
     declined_lines = "\n".join(
-        f"- {d.get('finding', '')} — declined: {d.get('reason', '')}" for d in declined) or "- None"
-    applied = "\n".join(f"- {x}" for x in changes_applied) or "- None"
+        f"- {d['finding_id']} — declined: {d.get('reason', '')}" for d in declined) or "- None"
     q_lines = "\n".join(f"- {q}" for q in open_questions) if open_questions else "- None"
     lint_line = ("clean" if not any(f["level"] == "error" for f in lint_final)
                  else "; ".join(f["message"] for f in lint_final if f["level"] == "error"))
@@ -174,9 +199,9 @@ def build_packet(brief, final_text, ev, declined, changes_applied, stats,
 ## Scorecard
 - Voice: {ev['voice_score']}/5
 - Positioning Impact: {ev['positioning_score']}/5
-- Must-fixes applied:
-{applied}
-- Evaluator suggestions declined by the writer:
+- Findings addressed (by id):
+{addressed_lines}
+- Findings declined by the writer:
 {declined_lines}
 - Questions for you:
 {q_lines}

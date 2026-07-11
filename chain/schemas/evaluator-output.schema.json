@@ -10,10 +10,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["severity", "quote", "why"],
+        "required": ["id", "severity", "quote", "why"],
         "properties": {
+          "id": {"type": "string", "description": "stable finding id (F1, F2, ...) the writer references"},
           "severity": {"type": "string", "enum": ["must-fix", "consideration"]},
-          "quote": {"type": "string"},
+          "quote": {"type": "string", "description": "the exact passage the finding is about"},
           "why": {"type": "string"}
         }
       }

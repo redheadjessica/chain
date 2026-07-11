@@ -70,5 +70,7 @@ An `{long_form + companion_post}` bundle adds a **pair section**: does the compa
 create interest in the long-form piece, does it stand alone, are the two unnecessarily
 repetitive, does each fit its channel. Authored by the evaluator's bundle mode.
 
-The bundle packet ships in the bundle slice; the single-draft packet above is built now
-([`chain/produce.py`](../chain/produce.py)).
+Both are built now — the single-draft packet in [`chain/produce.py`](../chain/produce.py)
+and the bundle packet in [`chain/bundle.py`](../chain/bundle.py). A synthetic bundle
+example is in
+[`examples/sample-bundle-packet.md`](../examples/sample-bundle-packet.md).
