@@ -16,6 +16,8 @@
 chain_home: ~/.chain
 
 # --- Intake: how much model-assisted setup you want to pay for ---------------
+# Full adaptive onboarding (assess/improve/create every editorial input at any
+# maturity level): `python3 -m chain.intake` + the chain-intake agent. docs/intake.md.
 # manual   : you map sources yourself below; deterministic indexing, ~no model cost.
 # assisted : CHAIN samples a few files, proposes a mapping, you confirm (recommended).
 # deep     : CHAIN inspects a broader/messier corpus and proposes a mapping (opt-in,

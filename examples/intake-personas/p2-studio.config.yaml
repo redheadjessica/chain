@@ -1,0 +1,41 @@
+# Intake persona 2 — small-business owner with scattered raw material (synthetic).
+# Reuses the committed Sweet Fern Sugaring Studio demo sources: FAQs, reviews,
+# consultation notes, one published post — real signal, no editorial system.
+# Level 2 expectation: sources classify and map, corpus is thin, voice/positioning/
+# themes are missing and should be DISTILLED from the material, not interviewed
+# from scratch.
+
+chain_home: ./.chain/intake-p2
+
+voice_spec: ""
+positioning_pillars: ""
+
+sources:
+  - name: posts
+    type: text
+    path: ./examples/demo-sources-studio/posts
+    roles: [published]
+    include: ["*.md"]
+    enabled: true
+  - name: faqs
+    type: text
+    path: ./examples/demo-sources-studio/faqs
+    roles: [questions, audience-needs]
+    include: ["*.md"]
+    enabled: true
+  - name: reviews
+    type: text
+    path: ./examples/demo-sources-studio/reviews
+    roles: [reviews, feedback]
+    include: ["*.md"]
+    enabled: true
+  - name: notes
+    type: text
+    path: ./examples/demo-sources-studio/notes
+    roles: [reference, idea-source]
+    include: ["*.md"]
+    enabled: true
+
+defaults:
+  channel: neutral
+  format: short_form

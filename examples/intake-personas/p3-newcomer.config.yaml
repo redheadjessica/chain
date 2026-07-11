@@ -1,0 +1,22 @@
+# Intake persona 3 — subject-matter expert with almost nothing (synthetic).
+# One rough notes file. No published writing, no voice guide, no strategy.
+# Level 3 expectation: intake must NOT reject or stall — the plan should route to
+# guided interview + short writing exercises that create a seed corpus (role
+# `samples`) and first-version voice/positioning collaboratively.
+
+chain_home: ./.chain/intake-p3
+
+voice_spec: ""
+positioning_pillars: ""
+
+sources:
+  - name: notes
+    type: text
+    path: ./examples/intake-personas/p3-newcomer
+    roles: [reference, idea-source]
+    include: ["*.md"]
+    enabled: true
+
+defaults:
+  channel: neutral
+  format: short_form

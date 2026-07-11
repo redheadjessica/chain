@@ -1,0 +1,26 @@
+# Intake persona 1 — "Maya Chen", organized professional (synthetic).
+# Level 1 expectation: corpus + voice guide + pillars already exist and are mapped in
+# place; intake should validate, find only optional gaps, and get out of the way.
+
+chain_home: ./.chain/intake-p1
+
+voice_spec: ./examples/intake-personas/p1-organized/voice-guide.md
+positioning_pillars: ./examples/intake-personas/p1-organized/pillars.md
+
+sources:
+  - name: essays
+    type: longform
+    path: ./examples/intake-personas/p1-organized/essays
+    roles: [published]
+    include: ["*.md"]
+    enabled: true
+  - name: posts
+    type: linkedin_posts
+    path: ./examples/intake-personas/p1-organized/posts
+    roles: [published]
+    include: ["*.md"]
+    enabled: true
+
+defaults:
+  channel: linkedin
+  format: short_form

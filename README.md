@@ -49,7 +49,10 @@ the same rows.
 ## Status
 
 **Early (v0.0.1).** In place: the privacy firewall, config pattern, editorial library,
-idempotent source intake + idea harvesting, the domain-agnostic Discover synthesis
+**adaptive intake** (onboards any editorial maturity level — maps existing material in
+place, or collaboratively creates a starting voice and strategy; see
+[docs/intake.md](docs/intake.md)), idempotent source intake + idea harvesting, the
+domain-agnostic Discover synthesis
 (portable `chain-discoverer`), and the production spine **Brief → Draft → Evaluate →
 bounded Finalize** (portable `chain-writer` / `chain-evaluator`, deterministic
 `lint_draft`, finding-id traceability, preservation-mode revision, private draft packets),
@@ -72,7 +75,7 @@ The `examples/` synthetic persona lets you see the data model with **no private 
 ## Docs
 
 - [Architecture](docs/architecture.md) · [Future work](docs/future-work.md)
-- [Sources](docs/sources.md) · [Privacy](docs/privacy.md) · [The packet](docs/packet.md)
+- [Intake](docs/intake.md) · [Sources](docs/sources.md) · [Privacy](docs/privacy.md) · [The packet](docs/packet.md)
 
 ## License
 

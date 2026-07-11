@@ -1,5 +1,9 @@
 # CHAIN — Sources & Intake
 
+> Source mapping is one part of the broader **adaptive intake** — the onboarding that
+> assesses every editorial input (voice, positioning, themes, …) as exists / partial /
+> missing and helps create what's absent. See [intake.md](intake.md).
+
 CHAIN **adapts to where your writing already lives** and to **how much model-assisted
 setup you want to pay for.** You never reorganize anything: you point CHAIN at your
 existing folders and it maps them in place, read-only. No source is ever moved or copied

@@ -8,6 +8,9 @@
 chain.config.local.yaml
 *.config.local.yaml
 
+# Personal-identifier denylist read by the local pre-commit firewall hook
+*denylist.local.txt
+
 # chain_home when kept local (library, learned state, disposable workspace, cache).
 # The default ~/.chain lives outside the repo; this covers the demo's ./.chain too.
 .chain/

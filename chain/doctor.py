@@ -64,6 +64,14 @@ def run_doctor(config: dict, repo_root) -> list:
     except Exception as exc:  # pragma: no cover - defensive
         checks.append(Check("error", "ledger", f"cannot read ledger: {exc}"))
 
+    # 3b. intake manifest (adaptive onboarding record)
+    mpath = Path(chain_home) / "state" / "intake-manifest.json"
+    if mpath.exists():
+        checks.append(Check("ok", "intake", f"manifest present ({mpath})"))
+    else:
+        checks.append(Check("warn", "intake",
+                            "no intake manifest yet — run: python3 -m chain.intake"))
+
     # 4. sources exist
     for sd in config.get("sources", []):
         if not sd.get("enabled", True):
