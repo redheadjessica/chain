@@ -1,0 +1,81 @@
+# CHAIN — example configuration
+#
+# Copy this to `chain.config.local.yaml` and edit it. The local copy is gitignored:
+# it holds YOUR real folder locations and never enters git.
+#
+#   cp chain.config.example.yaml chain.config.local.yaml
+#
+# CHAIN adapts to where your writing ALREADY lives. You do not reorganize anything:
+# you point CHAIN at your existing folders and files, and it maps them in place.
+# CHAIN owns exactly one writable location, `chain_home`, for the state it authors.
+
+# --- The one writable root CHAIN owns ---------------------------------------
+# Holds library/ (ideas.csv, pieces.csv), state/ (ingestion ledger), learned state,
+# and the disposable workspace/. Default ~/.chain. May live anywhere OUTSIDE this
+# repo. Kept out of git.
+chain_home: ~/.chain
+
+# --- Intake: how much model-assisted setup you want to pay for ---------------
+# manual   : you map sources yourself below; deterministic indexing, ~no model cost.
+# assisted : CHAIN samples a few files, proposes a mapping, you confirm (recommended).
+# deep     : CHAIN inspects a broader/messier corpus and proposes a mapping (opt-in,
+#            more token-intensive).
+# Assisted/deep produce a DURABLE mapping written back here — they don't re-run every
+# time. Normal runs read the saved mapping and inspect only new/changed files.
+intake:
+  mode: manual                 # manual | assisted | deep
+  sample_size: 8               # files sampled per source in assisted/deep
+  model: claude-haiku-4-5      # model used for assisted/deep proposals (cost control)
+
+# --- Canon references (read-only; mapped in place, never copied) ------------
+# Point these at files you already keep, or at seeded copies in chain_home. They are
+# your voice and your positioning pillars — CHAIN reads them, never writes them.
+voice_spec: "{chain_home}/voice-spec.md"
+positioning_pillars: "{chain_home}/positioning-pillars.md"
+
+# --- Sources (your existing folders, read-only, mapped in place) ------------
+# `type` selects the connector that knows how to read that folder. See docs/sources.md.
+# Nothing here is relocated. A recommended layout for brand-new users is in
+# docs/sources.md, but it is only an example — use whatever structure you already have.
+sources:
+  - name: linkedin
+    type: linkedin_posts
+    path: ~/path/to/your/linkedin-posts
+    include: ["*.txt", "*.md"]
+    enabled: true
+
+  - name: longform
+    type: longform                   # Medium / Substack / essays
+    path: ~/path/to/your/writing
+    include: ["*.md", "*.txt"]
+    enabled: true
+
+  - name: website
+    type: website
+    path: ~/path/to/your/site-content
+    include: ["*.md", "*.html", "*.txt"]
+    enabled: false
+
+  - name: applications
+    type: job_applications           # one subfolder per application; CHAIN harvests the
+    path: ~/path/to/your/applications  # writing-idea suggestions already in those files
+    include: ["*.md", "*.txt"]
+    exclude: ["**/_work/**", "**/*.pdf", "**/*.pages", "**/*.docx"]
+    idea_marker: "Writing ideas"     # configurable heading — no filename is hard-coded
+    enabled: true
+
+  - name: project
+    type: repo                       # a project repo: "what changed -> public lesson"
+    path: ~/path/to/your/project
+    include: ["*.md", "CHANGELOG*"]
+    enabled: false
+
+  - name: backlog
+    type: backlog                    # OPTIONAL hand-kept idea list, one source among many
+    path: "{chain_home}/backlog-notes.md"
+    enabled: false
+
+# --- Defaults for a run (overridable per run spec; see examples/runs/) -------
+defaults:
+  channel: linkedin
+  format: short_post

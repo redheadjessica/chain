@@ -1,0 +1,24 @@
+# CHAIN run spec — the first proof-of-concept preset.
+#
+# Produces five short/medium LinkedIn-ready pieces from autonomously discovered
+# ideas, each taken through Discover -> Draft -> Evaluate -> Finalize with no
+# mid-run human checkpoint. A clean test of Discover, writing, evaluation, revision,
+# and packet usefulness before exercising every format at once.
+#
+# The engine is NOT limited to this shape — see the sibling presets (to come) for a
+# directed premise, a long-form article, an article+companion bundle, and expanding
+# an existing piece. Change any field below to reshape a run.
+
+name: five-linkedin
+count: 5
+
+idea_source: discover        # discover | backlog | user | mixed
+formats: [short_post]        # allowed formats for this run
+default_channel: linkedin
+allow_longform: false
+auto_companion: false        # when true, each long-form piece also gets a companion
+
+# Optional guidance for selection (all optional):
+prefer_timeliness: balanced  # evergreen | time-sensitive | balanced
+respect_user_interest: true  # weigh your stated interest, not only CHAIN's assessment
+distinct_pillars: true       # spread the five across positioning pillars, not one theme

@@ -1,0 +1,26 @@
+[project]
+name = "chain-editorial"
+version = "0.0.1"
+description = "CHAIN — Contextual Human-AI Narrative System: a channel-neutral editorial engine."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+# The editorial-library helper and path-safety checks are stdlib-only (so tests run
+# with zero installs). PyYAML is the single runtime dependency, used only to parse
+# configuration files.
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["chain"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

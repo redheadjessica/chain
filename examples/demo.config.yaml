@@ -1,0 +1,38 @@
+# CHAIN — demo configuration (synthetic persona "Alex Rivera").
+#
+# Runs the repo end-to-end with ZERO private data. Sources point at the committed
+# demo material (mapped in place, read-only). chain_home points at a gitignored local
+# location so a demo run creates no git noise.
+#
+# The committed examples/demo-home/ is a SEED. Copy it into the gitignored home before
+# a demo run (this is what `chain init` will automate):
+#     mkdir -p .chain/demo-home && cp -R examples/demo-home/. .chain/demo-home/
+# Keeping chain_home gitignored is enforced by path_safety — the one writable root
+# must never resolve inside the repo unignored.
+
+chain_home: ./.chain/demo-home
+
+voice_spec: "{chain_home}/voice-spec.md"
+positioning_pillars: "{chain_home}/positioning-pillars.md"
+
+sources:
+  - name: linkedin
+    type: linkedin_posts
+    path: ./examples/demo-sources/linkedin
+    include: ["*.md"]
+    enabled: true
+  - name: longform
+    type: longform
+    path: ./examples/demo-sources/longform
+    include: ["*.md"]
+    enabled: true
+  - name: applications
+    type: job_applications
+    path: ./examples/demo-sources/applications
+    include: ["*.md"]
+    idea_marker: "Writing ideas"
+    enabled: true
+
+defaults:
+  channel: linkedin
+  format: short_post
