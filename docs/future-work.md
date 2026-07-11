@@ -16,6 +16,17 @@ here gets quietly built early. V1 scope is the [architecture](architecture.md).
   time-sensitive, resurface-on-new-material, honor user interest)
 - The five-output autonomous run preset
 
+## Known limitations (V1)
+
+- **Bundle-level revision is not wired.** The evaluator's bundle mode can *identify*
+  pair-level problems (redundancy, incoherence, weak angle), but a bundle-level finding
+  does **not** yet trigger a bounded revision of one of the two drafts — it is reported in
+  the bundle packet only. This is acceptable for now: the first real-world V1 test
+  generates five **independent short-form** drafts, which never enter bundle mode. Bundle
+  revision (feed the bundle finding back into one draft's single-draft spine, once,
+  preservation-checked) should be completed **before bundles are treated as fully
+  production-ready.**
+
 ## V2
 
 - **Missing-evidence detector** — identify important capabilities absent from the
