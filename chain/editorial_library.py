@@ -27,6 +27,7 @@ groom() reconciles anything they added by hand.
 from __future__ import annotations
 
 import csv
+import difflib
 import re
 from dataclasses import dataclass
 from datetime import date
@@ -84,10 +85,26 @@ IDEA_STATUSES = {
     "proposed", "developing", "briefed", "in-production",
     "produced", "published", "parked", "rejected",
 }
-PIECE_STATUSES = {"draft", "published", "parked"}
+# A Piece moves draft -> final -> published (or parked). User-facing, "draft" and
+# "final" are both "Drafts" (unpublished); only "published" is "Published writing".
+PIECE_STATUSES = {"draft", "final", "published", "parked"}
+UNPUBLISHED_PIECE_STATUSES = {"draft", "final"}
+
+# Ideas hidden from the normal active view (rejected/parked are preserved, not shown).
+INACTIVE_IDEA_STATUSES = {"rejected", "parked"}
 
 # The only fields a human must supply to add an idea by hand.
 IDEA_MINIMAL_REQUIRED = ("working_title", "premise")
+
+# Near-duplicate threshold for idea dedup (difflib ratio on normalized premise).
+NEAR_DUPLICATE_RATIO = 0.85
+
+
+def normalize_text(s: str) -> str:
+    """Lowercase, strip punctuation, collapse whitespace — for duplicate detection."""
+    s = (s or "").lower()
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
 
 
 # --- problems ---------------------------------------------------------------
@@ -174,10 +191,37 @@ class EditorialLibrary:
         return [p for p in self.pieces if p.get("idea_id") == idea_id]
 
     def drafts(self) -> list[dict]:
-        return [p for p in self.pieces if p.get("status") == "draft"]
+        """Unpublished pieces (draft or final) — user-facing 'Drafts'."""
+        return [p for p in self.pieces if p.get("status") in UNPUBLISHED_PIECE_STATUSES]
 
     def published(self) -> list[dict]:
+        """User-facing 'Published writing'."""
         return [p for p in self.pieces if p.get("status") == "published"]
+
+    def active_ideas(self) -> list[dict]:
+        """The normal backlog view — rejected/parked are preserved but hidden."""
+        return [r for r in self.ideas if r.get("status") not in INACTIVE_IDEA_STATUSES]
+
+    # -- duplicate detection (deterministic; no model) --
+    def find_matching_idea(self, working_title: str, premise: str,
+                           *, threshold: float = NEAR_DUPLICATE_RATIO):
+        """Return (idea_id, kind) where kind is 'exact' | 'near' | None. Compares the
+        normalized premise (falling back to title) against ALL ideas, including
+        rejected/parked ones, so a rejected idea is never silently re-proposed."""
+        n_prem = normalize_text(premise)
+        n_title = normalize_text(working_title)
+        best_id, best_ratio = None, 0.0
+        for r in self.ideas:
+            r_prem = normalize_text(r.get("premise", ""))
+            r_title = normalize_text(r.get("working_title", ""))
+            if n_prem and (n_prem == r_prem or (n_title and n_title == r_title)):
+                return r.get("idea_id"), "exact"
+            ratio = difflib.SequenceMatcher(None, n_prem, r_prem).ratio() if n_prem and r_prem else 0.0
+            if ratio > best_ratio:
+                best_id, best_ratio = r.get("idea_id"), ratio
+        if best_id and best_ratio >= threshold:
+            return best_id, "near"
+        return None, None
 
     def get_idea(self, idea_id: str):
         return next((r for r in self.ideas if r.get("idea_id") == idea_id), None)
