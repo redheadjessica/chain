@@ -31,6 +31,16 @@ honors these wins.
    file, stage, queue, index, or config surface must remove more complexity than it
    adds. The goal is *the smallest set of durable concepts that supports a powerful
    editorial workflow* — not maximum flexibility.
+4. **Visible structure over hidden convenience.** Where a person needs to find or
+   inspect something — their own source material, canon references, or CHAIN's
+   generated output — prefer a clearly named, visible location over one reachable
+   only through configuration or an internal working directory. When CHAIN depends on
+   canonical content that lives elsewhere, expose it through a clearly named symlink
+   rather than duplicating it or hiding the dependency behind config alone, as long as
+   a single source of truth is preserved. Generated output a person is meant to
+   review should live somewhere intentionally visible for that purpose — not simply
+   be reachable via a pointer into otherwise-hidden implementation state. (Learned
+   from applying this same principle to JAIL, CHAIN's sibling engine.)
 
 ---
 

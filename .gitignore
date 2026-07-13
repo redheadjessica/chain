@@ -4,8 +4,11 @@
 # referenced in place and never copied here. If any of these ever show up tracked,
 # stop and check before committing.
 
+# Your real, private data and config — real files + symlinks to their canonical
+# homes (e.g. ~/Documents/Writing), visible for inspection, never tracked.
+PRIVATE__YOUR_FILES_GITIGNORED/
+
 # Your real, path-bearing config (copy of chain.config.example.yaml)
-chain.config.local.yaml
 *.config.local.yaml
 
 # Personal-identifier denylist read by the local pre-commit firewall hook

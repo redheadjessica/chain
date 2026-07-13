@@ -38,7 +38,8 @@ class TestPathSafety(unittest.TestCase):
     def test_gitignore_covers_the_firewall(self):
         gitignore = (REPO / ".gitignore").read_text(encoding="utf-8")
         self.assertIn(".chain/", gitignore)
-        self.assertIn("chain.config.local.yaml", gitignore)
+        self.assertIn("PRIVATE__YOUR_FILES_GITIGNORED/", gitignore)
+        self.assertIn("*.config.local.yaml", gitignore)
 
     def test_demo_home_is_the_committed_seed(self):
         """The synthetic demo home is committed on purpose so the repo runs; assert

@@ -23,7 +23,7 @@ from .path_safety import check_writable_paths
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXAMPLE_CONFIG = REPO_ROOT / "chain.config.example.yaml"
-LOCAL_CONFIG = REPO_ROOT / "chain.config.local.yaml"
+LOCAL_CONFIG = REPO_ROOT / "PRIVATE__YOUR_FILES_GITIGNORED" / "chain.config.local.yaml"
 
 
 def _load_yaml(path: Path) -> dict:
