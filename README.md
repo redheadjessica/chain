@@ -89,11 +89,13 @@ mkdir -p PRIVATE__YOUR_FILES_GITIGNORED
 cp chain.config.example.yaml PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml  # point paths at your folders
 python3 -m unittest discover -s ENGINE__PUBLIC_GIT_TRACKED/tests   # runs with zero installs
 ./chain doctor                                          # preflight: firewall, library, sources
-./chain editorial_library validate examples/demo-home/library
+./chain editorial_library validate ENGINE__PUBLIC_GIT_TRACKED/examples/demo-home/library
 ```
 
-`./chain <module> [args...]` runs `python3 -m chain.<module> [args...]` for you —
-picks up a project `.venv` automatically if you have one, otherwise falls back to
+`./chain <module> [args...]` runs `python3 -m chain.<module> [args...]` for you, with
+your working directory kept at the repo root throughout — so path arguments (a config
+file, a library path) resolve from wherever you're standing, exactly as you'd expect.
+It picks up a project `.venv` automatically if you have one, otherwise falls back to
 `python3` on your PATH. Run `./chain` with no arguments to see what's runnable.
 
 The `examples/` synthetic persona lets you see the data model with **no private data**.

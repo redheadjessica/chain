@@ -149,6 +149,55 @@ into readable threads.
   README also gained a one-line pointer to `./chain` ahead of the Quickstart block.
   Did not touch `canon/`, `docs/`, or `examples/` organization — that's still open,
   see the running observations below. Full suite (119 tests) green.
+- Batch 6: fixed the one real gap Batch 5 left — path *arguments* to `./chain
+  <module>` resolved from `ENGINE__PUBLIC_GIT_TRACKED/` (documented, but still an
+  implementation detail leaking through, since the whole point of the launcher was
+  to hide it). Direction was explicit: don't just document it, fix it, and don't
+  guess which arguments are paths. Removed the `cd "$ENGINE_DIR"` from `./chain`
+  entirely — the process's working directory now stays at the repo root for the
+  whole invocation. `chain` is made importable by exposing
+  `ENGINE__PUBLIC_GIT_TRACKED/` to that one child process via a `PYTHONPATH` prefix
+  on the `exec` line itself (`PYTHONPATH="$ENGINE_DIR:$PYTHONPATH" exec "$PYTHON" -m
+  "chain.$MODULE" "$@"`) — scoped to that single command, never exported into the
+  user's shell, matching "expose ENGINE only to that child process" rather than a
+  global environment change.
+  This flips which direction the demo/persona example configs' internal relative
+  paths need to point: since CWD is the repo root again (not ENGINE), `chain_home:
+  ../.chain/...` reverted to `./.chain/...` (`.chain/` lives at the true root, one
+  level closer now), and `sources:`/`voice_spec` paths that were bare
+  `./examples/...` (correct only when CWD was ENGINE) needed the
+  `ENGINE__PUBLIC_GIT_TRACKED/` prefix put back — across `demo.config.yaml`,
+  `demo-studio.config.yaml`, and all three `intake-personas/*.config.yaml`. Verified
+  each individually via a real `./chain intake` run, not just inspection — file
+  counts, not just non-empty paths.
+  `test_intake.py`'s `_resolve_relative()` helper (added in Batch 5 specifically to
+  make persona tests CWD-independent) needed the same flip: it resolved relative
+  config paths against `REPO` (the test file's own directory, i.e. `ENGINE`) — now
+  resolves against a new `TOP_ROOT = REPO.parent`, matching the true-root-relative
+  convention the configs use again. `CliTests`' two raw-text substitution targets in
+  the same file flipped the same way (`../.chain/intake-p1` → `./.chain/intake-p1`;
+  `./examples/` → `./ENGINE__PUBLIC_GIT_TRACKED/examples/`).
+  Updated every doc path example accordingly: README Quickstart, both `chain-intake`
+  agent files (including two `canon/...` mentions that were sibling-relative-correct
+  under the old model but needed the prefix now), `docs/intake.md` (a stale
+  "resolves against ENGINE__PUBLIC_GIT_TRACKED/" line plus two more `canon/`
+  mentions), and `examples/intake-personas/README.md`. Left markdown *hyperlinks*
+  (`[text](../canon/foo.md)`, resolved by the renderer relative to the file, not by
+  the launcher) and `docs/privacy.md`'s categorical table entries alone — genuinely
+  unaffected by this change, not an inconsistency.
+  Verified for real: `./chain doctor`; the exact repo-root-relative path from the
+  task (`./chain intake ENGINE__PUBLIC_GIT_TRACKED/examples/demo.config.yaml
+  --json`); a relative *private* config path
+  (`PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml`, resolving all of
+  Jessica's real sources); `--help` and exit-code forwarding (0 / 2); the two
+  environment-not-ready failure simulations from Batch 5, re-run against the new
+  script. Full suite (119 tests) green from both the repo root and
+  `ENGINE__PUBLIC_GIT_TRACKED/`.
+  This closes the filesystem architecture migration — ENGINE / PRIVATE /
+  READY-TO-REVIEW all exist, are documented consistently, and are usable from the
+  repo root with no implementation detail leaking through. `canon/`, `docs/`,
+  `examples/` internal reorganization remains open (running observations, unchanged)
+  but is explicitly a separate, later pass — not blocking.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 

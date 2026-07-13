@@ -4,15 +4,14 @@
 # demo material (mapped in place, read-only). chain_home points at a gitignored local
 # location so a demo run creates no git noise.
 #
-# Run chain commands from ENGINE__PUBLIC_GIT_TRACKED/ (this file's own directory) —
-# paths below are relative to that. The committed examples/demo-home/ is a SEED.
-# Copy it into the gitignored home before a demo run (this is what `chain init` will
-# automate) — this one setup step runs from the true repo root, before you cd in:
+# Run via ./chain (from the repo root) — paths below are relative to the repo root,
+# same as everything else. The committed examples/demo-home/ is a SEED. Copy it into
+# the gitignored home before a demo run (this is what `chain init` will automate):
 #     mkdir -p .chain/demo-home && cp -R ENGINE__PUBLIC_GIT_TRACKED/examples/demo-home/. .chain/demo-home/
 # Keeping chain_home gitignored is enforced by path_safety — the one writable root
 # must never resolve inside the repo unignored.
 
-chain_home: ../.chain/demo-home
+chain_home: ./.chain/demo-home
 
 voice_spec: "{chain_home}/voice-spec.md"
 positioning_pillars: "{chain_home}/positioning-pillars.md"
@@ -20,19 +19,19 @@ positioning_pillars: "{chain_home}/positioning-pillars.md"
 sources:
   - name: linkedin
     type: linkedin_posts
-    path: ./examples/demo-sources/linkedin
+    path: ./ENGINE__PUBLIC_GIT_TRACKED/examples/demo-sources/linkedin
     roles: [published]
     include: ["*.md"]
     enabled: true
   - name: longform
     type: longform
-    path: ./examples/demo-sources/longform
+    path: ./ENGINE__PUBLIC_GIT_TRACKED/examples/demo-sources/longform
     roles: [published]
     include: ["*.md"]
     enabled: true
   - name: applications
     type: job_applications          # one example of a source; nothing special about it
-    path: ./examples/demo-sources/applications
+    path: ./ENGINE__PUBLIC_GIT_TRACKED/examples/demo-sources/applications
     roles: [questions, idea-source]
     include: ["*.md"]
     idea_marker: "Writing ideas"    # harvesting is driven by this marker, on any source

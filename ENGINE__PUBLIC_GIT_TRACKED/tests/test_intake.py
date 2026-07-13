@@ -11,15 +11,17 @@ from chain.intake import (ASSETS, REGISTRY, build_manifest, build_plan, classify
                           save_manifest, summary)
 
 REPO = Path(__file__).resolve().parent.parent
+TOP_ROOT = REPO.parent  # true repo root — persona configs' paths are relative to this
 PERSONAS = REPO / "examples" / "intake-personas"
 
 
 def _resolve_relative(value):
-    """Persona configs use paths relative to ENGINE__PUBLIC_GIT_TRACKED/ (where chain
-    commands are meant to be run from). Make them absolute against REPO right after
-    loading, so classify()/walk_source() work regardless of the test runner's CWD."""
+    """Persona configs use paths relative to the true repo root (same convention as
+    ./chain: CWD stays at the repo root, ENGINE is exposed via PYTHONPATH, not cd).
+    Make them absolute against TOP_ROOT right after loading, so classify()/
+    walk_source() work regardless of the test runner's own CWD."""
     if isinstance(value, str) and value and not value.startswith("~") and not Path(value).is_absolute():
-        return str((REPO / value).resolve())
+        return str((TOP_ROOT / value).resolve())
     return value
 
 
@@ -198,8 +200,8 @@ class CliTests(unittest.TestCase):
         self.home = Path(self.tmp.name) / "home"
         # a persona config copy whose chain_home points at the temp dir
         raw = (PERSONAS / "p1-organized.config.yaml").read_text(encoding="utf-8")
-        raw = raw.replace("../.chain/intake-p1", str(self.home))
-        raw = raw.replace("./examples/", str(REPO / "examples") + "/")
+        raw = raw.replace("./.chain/intake-p1", str(self.home))
+        raw = raw.replace("./ENGINE__PUBLIC_GIT_TRACKED/examples/", str(REPO / "examples") + "/")
         self.cfg_path = Path(self.tmp.name) / "cfg.yaml"
         self.cfg_path.write_text(raw, encoding="utf-8")
 

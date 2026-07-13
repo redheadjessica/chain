@@ -4,15 +4,21 @@
 #
 # Usage: ./chain <module> [args...]
 #   e.g. ./chain doctor
-#        ./chain intake examples/demo.config.yaml --json
+#        ./chain intake ENGINE__PUBLIC_GIT_TRACKED/examples/demo.config.yaml --json
 #        ./chain intake --help
 #
 # This is dispatch only — it owns no CLI logic of its own. It resolves the repo/engine
 # paths from its own location (not the caller's CWD), picks a Python interpreter
-# (project .venv if present, else python3 on PATH), cds into the engine directory so
-# `chain` is importable and every config's engine-relative paths resolve correctly,
-# then execs `python3 -m chain.<module> [args...]` — forwarding all arguments and the
-# exact exit code. Each chain.<module> owns its own arguments, including --help.
+# (project .venv if present, else python3 on PATH), and execs
+# `python3 -m chain.<module> [args...]` — forwarding all arguments and the exact exit
+# code. Each chain.<module> owns its own arguments, including --help.
+#
+# The process's working directory stays at the repository root throughout — so any
+# relative path *argument* you pass (a config file, etc.) resolves the way you'd
+# expect from where you're standing, not from inside the engine. `chain` is made
+# importable by exposing ENGINE__PUBLIC_GIT_TRACKED/ to this one child process via
+# PYTHONPATH (scoped to this single command — never exported into your shell, never
+# written anywhere), not by changing directory and not by installing anything.
 #
 # macOS/Linux only for now (bash). A cross-platform launcher is future work.
 set -euo pipefail
@@ -54,7 +60,8 @@ known_modules() {
 
 if [ "$#" -lt 1 ]; then
   echo "Usage: ./chain <module> [args...]" >&2
-  echo "Runs: python3 -m chain.<module> [args...], from ENGINE__PUBLIC_GIT_TRACKED/." >&2
+  echo "Runs: python3 -m chain.<module> [args...] — your working directory stays" >&2
+  echo "the repository root; relative path arguments resolve from there." >&2
   echo "Runnable modules: $(known_modules)" >&2
   echo "Each module has its own --help, e.g. ./chain intake --help" >&2
   exit 1
@@ -69,5 +76,7 @@ if [ ! -f "$CHAIN_PKG_DIR/$MODULE.py" ]; then
   exit 1
 fi
 
-cd "$ENGINE_DIR"
-exec "$PYTHON" -m "chain.$MODULE" "$@"
+# CWD stays at the repo root (unchanged); ENGINE__PUBLIC_GIT_TRACKED/ is exposed to
+# this one child process only, via a PYTHONPATH prefix on the exec line itself — not
+# exported, not persisted, gone the instant this process exits.
+PYTHONPATH="$ENGINE_DIR${PYTHONPATH:+:$PYTHONPATH}" exec "$PYTHON" -m "chain.$MODULE" "$@"

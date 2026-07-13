@@ -22,9 +22,10 @@ their material; adapt to their world.
 
 ## The deterministic core runs first
 
-Always start with, run from the repo root (`./chain` finds the engine for you — paths
-below, e.g. `canon/...`, are relative to `ENGINE__PUBLIC_GIT_TRACKED/`, where `./chain`
-actually runs commands from):
+Always start with, run from the repo root (`./chain` finds the engine for you and
+keeps your working directory at the repo root — paths below, e.g.
+`ENGINE__PUBLIC_GIT_TRACKED/canon/...`, are relative to the repo root, same as
+everything else):
 
     ./chain intake [config] --json
 
@@ -42,8 +43,9 @@ asset you finish — it is idempotent and recomputes from disk.
    `--mark <asset>=improved`.
 3. **missing** — first ask whether it exists somewhere unseen ("even an old
    half-wrong version?"). If truly absent, create the smallest useful version
-   collaboratively per `canon/intake-interview-guide.md`, from templates in
-   `canon/*.template.md`. When creating from a template, replace ALL of its
+   collaboratively per `ENGINE__PUBLIC_GIT_TRACKED/canon/intake-interview-guide.md`,
+   from templates in `ENGINE__PUBLIC_GIT_TRACKED/canon/*.template.md`. When creating
+   from a template, replace ALL of its
    boilerplate — any leftover "> Replace…" line or "(template)" heading makes the
    classifier grade the asset `partial`. Record `--mark <asset>=created`.
 

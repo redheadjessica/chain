@@ -15,7 +15,7 @@ collaboratively.
 | Half | What it does | Cost |
 |---|---|---|
 | **Deterministic core** — `./chain intake` | inspects sources + assets, classifies each, computes your maturity level, generates the plan (blockers first), writes the durable manifest, prints the one progress summary | zero tokens |
-| **Collaborative layer** — the `chain-intake` agent | locates scattered material, proposes source maps, interviews, runs writing exercises, distills guidance from raw material, creates first versions from `canon/*.template.md` | model-backed |
+| **Collaborative layer** — the `chain-intake` agent | locates scattered material, proposes source maps, interviews, runs writing exercises, distills guidance from raw material, creates first versions from `ENGINE__PUBLIC_GIT_TRACKED/canon/*.template.md` | model-backed |
 
 The agent always runs the core first and works from its report; the core is
 idempotent, so every finished asset is recorded and never re-asked.
@@ -59,15 +59,15 @@ Run from the repo root — `./chain` finds the engine for you:
 
 `--set-path` is only needed when a file lives somewhere non-default — assets created
 at their default `chain_home` location are detected automatically on the next run.
-Relative paths in a config resolve against `ENGINE__PUBLIC_GIT_TRACKED/` (where
-`./chain` actually runs commands from) — use absolute paths in configs you keep
-elsewhere to avoid depending on that.
+Relative paths in a config resolve against the repo root (`./chain` keeps your working
+directory there) — use absolute paths in configs you keep elsewhere to avoid depending
+on that.
 `--skip` silences recommended as well as optional assets (a deliberate "not for me"
 is respected); only the four required assets can't be skipped.
 
 `./chain doctor` warns when no manifest exists yet. The collaborative flow: open the
 repo in Claude Code and ask for intake — the `chain-intake` agent handles the rest,
-one asset at a time, per `canon/intake-interview-guide.md`.
+one asset at a time, per `ENGINE__PUBLIC_GIT_TRACKED/canon/intake-interview-guide.md`.
 
 ## The manifest
 
