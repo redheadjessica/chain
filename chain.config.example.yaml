@@ -1,18 +1,21 @@
 # CHAIN — example configuration
 #
-# Copy this to `chain.config.local.yaml` and edit it. The local copy is gitignored:
-# it holds YOUR real folder locations and never enters git.
+# Copy this to `PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml` and edit it.
+# The local copy is gitignored: it holds YOUR real folder locations and never enters
+# git.
 #
-#   cp chain.config.example.yaml chain.config.local.yaml
+#   mkdir -p PRIVATE__YOUR_FILES_GITIGNORED
+#   cp chain.config.example.yaml PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml
 #
 # CHAIN adapts to where your writing ALREADY lives. You do not reorganize anything:
 # you point CHAIN at your existing folders and files, and it maps them in place.
-# CHAIN owns exactly one writable location, `chain_home`, for the state it authors.
+# Generated output always lands in the fixed, visible
+# __READY_TO_REVIEW__PRIVATE_GITIGNORED/ — not configured here.
 
-# --- The one writable root CHAIN owns ---------------------------------------
-# Holds library/ (ideas.csv, pieces.csv), state/ (ingestion ledger), learned state,
-# and the disposable workspace/. Default ~/.chain. May live anywhere OUTSIDE this
-# repo. Kept out of git.
+# --- The writable root CHAIN owns for its own machine state + library --------
+# Holds library/ (ideas.csv, pieces.csv, the durable record CHAIN writes) and state/
+# (ingestion ledger, cache — machine bookkeeping, never meant to be browsed). Default
+# ~/.chain. May live anywhere OUTSIDE this repo. Kept out of git.
 chain_home: ~/.chain
 
 # --- Intake: how much model-assisted setup you want to pay for ---------------

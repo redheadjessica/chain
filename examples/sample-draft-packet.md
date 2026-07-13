@@ -1,8 +1,8 @@
 # Draft — Please don't shave to tidy up first — short_form · linkedin
 
 *(SYNTHETIC sample packet for the "Sweet Fern Sugaring Studio" demo persona. Real packets
-live under the private `chain_home/workspace/` and quote your own sources. This one is
-committed so you can see the shape.)*
+live under the private `__READY_TO_REVIEW__PRIVATE_GITIGNORED/` and quote your own
+sources. This one is committed so you can see the shape.)*
 
 ## The draft
 A little heads-up that will save you a trip: please do not shave to tidy up before your first appointment.

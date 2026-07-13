@@ -1,12 +1,16 @@
 # ── CHAIN privacy firewall ───────────────────────────────────────────────
-# The repo ships the MECHANISM, never your data. CHAIN owns ONE writable root,
-# chain_home (default ~/.chain, outside the repo). Your sources and canon are
-# referenced in place and never copied here. If any of these ever show up tracked,
-# stop and check before committing.
+# The repo ships the MECHANISM, never your data. CHAIN owns two writable roots:
+# chain_home (default ~/.chain, outside the repo) and the review root (in-repo,
+# below). Your sources and canon are referenced in place and never copied here. If
+# any of these ever show up tracked, stop and check before committing.
 
 # Your real, private data and config — real files + symlinks to their canonical
 # homes (e.g. ~/Documents/Writing), visible for inspection, never tracked.
 PRIVATE__YOUR_FILES_GITIGNORED/
+
+# Generated output waiting on human review — drafts, packets. Canonical, visible
+# location; never tracked.
+__READY_TO_REVIEW__PRIVATE_GITIGNORED/
 
 # Your real, path-bearing config (copy of chain.config.example.yaml)
 *.config.local.yaml
@@ -14,8 +18,8 @@ PRIVATE__YOUR_FILES_GITIGNORED/
 # Personal-identifier denylist read by the local pre-commit firewall hook
 *denylist.local.txt
 
-# chain_home when kept local (library, learned state, disposable workspace, cache).
-# The default ~/.chain lives outside the repo; this covers the demo's ./.chain too.
+# chain_home when kept local (learned state, cache). The default ~/.chain lives
+# outside the repo; this covers the demo's ./.chain too.
 .chain/
 
 # The SYNTHETIC demo home is committed on purpose so the repo runs with no real data.

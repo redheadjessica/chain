@@ -2,7 +2,8 @@
 
 *(SYNTHETIC sample bundle packet for the product demo persona. Two Drafts under one
 Idea. The long-form body is abbreviated here for readability; a real bundle packet
-carries both drafts in full and lives under the private `chain_home/workspace/`.)*
+carries both drafts in full and lives under the private
+`__READY_TO_REVIEW__PRIVATE_GITIGNORED/`.)*
 
 Idea: IDEA-0005 · two Drafts (long-form + companion)
 

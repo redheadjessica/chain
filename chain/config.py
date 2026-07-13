@@ -8,8 +8,12 @@ the editorial-library helper and path-safety checks are stdlib-only so they run
 (and are tested) without any install.
 
 Location model (see docs/architecture.md):
-  * chain_home            — the one writable root CHAIN owns (default ~/.chain).
-                            library/ and workspace/ live inside it.
+  * chain_home            — the writable root for CHAIN's own machine state and its
+                            durable library (default ~/.chain).
+  * workspace_dir         — the canonical, visible home for generated output waiting
+                            on human review: the repo's own
+                            __READY_TO_REVIEW__PRIVATE_GITIGNORED/. Not separately
+                            configured, same fixed convention as JAIL.
   * voice_spec,           — read-only canon REFERENCES; point them at files you
     positioning_pillars     already have, anywhere. Never relocated or copied.
   * sources               — your existing folders, mapped in place.
@@ -24,6 +28,9 @@ from .path_safety import check_writable_paths
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXAMPLE_CONFIG = REPO_ROOT / "chain.config.example.yaml"
 LOCAL_CONFIG = REPO_ROOT / "PRIVATE__YOUR_FILES_GITIGNORED" / "chain.config.local.yaml"
+# Canonical, visible home for generated output waiting on human review. Fixed
+# convention (not user-configurable) — same as JAIL's identically-named root.
+REVIEW_DIR = REPO_ROOT / "__READY_TO_REVIEW__PRIVATE_GITIGNORED"
 
 
 def _load_yaml(path: Path) -> dict:
@@ -63,13 +70,15 @@ def load_config(local_path=None, example_path=None, *, check_paths=True) -> dict
     cfg["chain_home"] = chain_home
     # Derived, not separately configured (fewer config surfaces):
     cfg["library_dir"] = str(Path(chain_home) / "library")
-    cfg["workspace_dir"] = str(Path(chain_home) / "workspace")
+    cfg["workspace_dir"] = str(REVIEW_DIR)
 
     if check_paths:
-        problems = check_writable_paths({"chain_home": chain_home}, REPO_ROOT)
+        problems = check_writable_paths(
+            {"chain_home": chain_home, "workspace_dir": cfg["workspace_dir"]}, REPO_ROOT
+        )
         if problems:
             raise SystemExit(
-                "Refusing to run: chain_home could leak into git.\n  "
+                "Refusing to run: a writable root could leak into git.\n  "
                 + "\n  ".join(str(p) for p in problems)
             )
     return cfg

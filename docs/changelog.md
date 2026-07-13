@@ -36,11 +36,30 @@ into readable threads.
   a bare `chain.config.local.yaml` line; updated `test_path_safety.py`'s firewall
   assertion to match. Added design principle 4 to `docs/architecture.md` ("Visible
   structure over hidden convenience") capturing why symlinks are now a preferred
-  pattern here, not just an implementation shortcut. Deliberately did NOT touch
-  `chain_home/workspace` (the actual review-output relocation is a separate,
-  not-yet-decided batch — see the open question raised in chat) or move any public
-  engine files (`chain/`, `canon/`, `docs/`, `examples/`, `tests/` still at repo
-  root).
+  pattern here, not just an implementation shortcut.
+- Batch 2: retired `chain_home/workspace/` as a concept entirely. Investigated the
+  migration first (asked: which files, which references, is `pieces.csv` the only
+  thing pointing at them, any remaining reason to keep it under `chain_home`) — found
+  exactly 3 stale references, all in `pieces.csv`'s `final_text_path`, nothing else.
+  `__READY_TO_REVIEW__PRIVATE_GITIGNORED/` is now the fixed, non-configurable canonical
+  home for generated output (`chain/config.py`'s `workspace_dir` now derives from a
+  new `REVIEW_DIR` constant instead of `chain_home`); `chain_home` shrinks to machine
+  state (`cache/`, `state/`) plus the durable library. Physically moved the two real
+  historical runs out of `~/.chain/workspace/` into the repo (rather than leaving
+  history stranded in the old location) and rewrote `pieces.csv`'s 3 paths to match;
+  deleted the now-empty `~/.chain/workspace/`. Extended `path_safety.py`'s
+  `IGNORED_WRITABLE_PREFIXES` and `config.py`'s firewall check to cover the new root
+  explicitly (it no longer inherits safety from being nested under `chain_home`).
+  Revised design principle 2 (dropped the now-false "Workspace is intentionally
+  disposable" framing) and extended principle 4 with the decision rule: prefer
+  legibility for a new user over preserving historical implementation, unless
+  migration cost is genuinely significant. Rewrote `docs/architecture.md`'s "Where
+  things live" section (was "two ideas, not three" — now three), plus stale
+  `chain_home/workspace` mentions in `docs/privacy.md`, `docs/sources.md`,
+  `docs/packet.md`, `chain.config.example.yaml` (also fixed a stale `cp
+  chain.config.local.yaml`-to-root instruction left over from Batch 1), `produce.py`,
+  and both `examples/sample-*-packet.md` files. `chain doctor` and the full suite
+  (119 tests) confirm clean after the move.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 

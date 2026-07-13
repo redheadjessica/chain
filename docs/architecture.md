@@ -23,8 +23,9 @@ honors these wins.
    brand-new users is only ever an example, never a requirement.
 2. **Single source of truth.** Every piece of information has one canonical home.
    CHAIN indexes, normalizes, and *references* existing material instead of copying
-   it into new permanent locations. The only exception is the **Workspace**, which
-   holds intentionally disposable generated drafts.
+   it into new permanent locations. The one exception is generated output (drafts,
+   packets) — CHAIN originates it rather than referencing something that already
+   exists, so its canonical home is `__READY_TO_REVIEW__PRIVATE_GITIGNORED/`.
 3. **Minimize cognitive overhead.** Prefer fewer persistent concepts, fewer
    directories, fewer configuration surfaces, fewer review queues, fewer manual
    approval steps, fewer places to remember where something lives. Every new durable
@@ -37,51 +38,70 @@ honors these wins.
    only through configuration or an internal working directory. When CHAIN depends on
    canonical content that lives elsewhere, expose it through a clearly named symlink
    rather than duplicating it or hiding the dependency behind config alone, as long as
-   a single source of truth is preserved. Generated output a person is meant to
-   review should live somewhere intentionally visible for that purpose — not simply
-   be reachable via a pointer into otherwise-hidden implementation state. (Learned
-   from applying this same principle to JAIL, CHAIN's sibling engine.)
+   a single source of truth is preserved. Human-facing artifacts — anything a person
+   is expected to open, edit, or review — belong in a canonical, visible location;
+   hidden directories (`.chain/cache`, `.chain/state`, and the like) are for machine
+   state only: caches, indexes, manifests, logs. Never for something a person is
+   expected to browse. When choosing between preserving an existing implementation
+   and making the system easier for a new person to understand, prefer the latter
+   unless the migration cost is genuinely significant. (Learned from applying this
+   same principle to JAIL, CHAIN's sibling engine.)
 
 ---
 
-## Where things live (two ideas, not three)
+## Where things live
 
-There is no "Profile." CHAIN distinguishes only:
+There is no "Profile." CHAIN distinguishes three locations, matched to who each is
+for:
 
 - **Your world (referenced in place, read-only).** Your writing, applications,
   website, project repos — and your canon inputs (voice spec, positioning pillars).
   CHAIN reads these where they already are. Nothing is relocated or copied durably.
-- **CHAIN's home (`chain_home`, one writable root, default `~/.chain`, relocatable).**
-  The only place CHAIN owns. Holds the state CHAIN itself authors — which does not
-  pre-exist in your world — plus the disposable Workspace:
+- **`chain_home` (default `~/.chain`, relocatable) — machine state plus the durable
+  library.** Holds the ingestion cache and ledger (pure machine state, never meant to
+  be browsed) and the state CHAIN itself authors that must persist — the library and
+  any confirmed learning:
 
   ```
   chain_home/                 (default ~/.chain; may live anywhere outside the repo)
+    cache/                     # search/embedding cache — machine state, hidden
+    state/                     # ingestion ledger, intake manifest, selection log — machine state, hidden
     library/
-      ideas.csv               # the persistent ideas
-      pieces.csv              # every piece of writing (draft -> published)
-    feedback.md               # confirmed learning (created on first lesson)
-    stories.md                # story index (created on first harvest; pointers, not copies)
-    workspace/                # disposable: generated briefs, drafts, packets
+      ideas.csv                # the persistent ideas
+      pieces.csv                # every piece of writing (draft -> published)
+    feedback.md                # confirmed learning (created on first lesson)
+    stories.md                 # story index (created on first harvest; pointers, not copies)
   ```
 
-**Why this is the minimum.** Ideas, the pieces index, and learned feedback are things
-CHAIN writes and must persist; they have no home in your existing folders, so they
-need exactly one place CHAIN owns. Everything else you already have stays where it is
-and is referenced. That's the fewest durable concepts the workflow can run on.
+  The library and any confirmed-learning files are durable and human-relevant even
+  though CHAIN authors them — expose them with a visible symlink under
+  `PRIVATE__YOUR_FILES_GITIGNORED/` rather than leaving them reachable only through
+  `chain_home`. `cache/` and `state/` stay hidden.
+- **`__READY_TO_REVIEW__PRIVATE_GITIGNORED/` (fixed, in-repo, gitignored) — generated
+  output waiting on human review.** Every draft, packet, and finished-but-unpublished
+  piece a run produces. This is the canonical location, not a pointer into
+  `chain_home` or anywhere else — the same fixed, identically-named convention JAIL
+  uses. Not separately configured.
+
+**Why this is the minimum.** Ideas, the pieces index, learned feedback, and the
+active drafts are things CHAIN writes and must persist; they have no home in your
+existing folders, so they need places CHAIN owns or governs. Everything else you
+already have stays where it is and is referenced. The review root is a placement
+decision (visible vs. hidden), not a new durable concept layered on top.
 
 Configuration is correspondingly small:
 
 ```yaml
-chain_home: ~/.chain                 # the one writable root (workspace lives inside)
+chain_home: ~/.chain                 # machine state + library (generated output goes to
+                                      # __READY_TO_REVIEW__PRIVATE_GITIGNORED/, fixed, not here)
 voice_spec: ~/.chain/voice-spec.md   # a reference; point it at a file you already have
 positioning_pillars: ~/.chain/positioning-pillars.md
 sources: [ ... ]                     # your existing folders, mapped in place
 ```
 
 The repository ships the mechanism and generic templates — never your data. The
-runtime firewall refuses to run if `chain_home` resolves inside the repo without being
-gitignored. See [privacy.md](privacy.md).
+runtime firewall refuses to run if `chain_home` or the review root resolves inside the
+repo without being gitignored. See [privacy.md](privacy.md).
 
 ---
 

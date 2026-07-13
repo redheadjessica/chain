@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Path-safety checks — the runtime half of the privacy firewall.
 
-CHAIN owns exactly one writable root, `chain_home` (default ~/.chain), which holds
-its library, learned state, and the disposable Workspace. That root must resolve
-OUTSIDE the repository, or (if kept local, e.g. for the demo) under a gitignored
-prefix such as `.chain/`. This lets a preflight (`chain doctor`) and the test-suite
-assert that CHAIN can never leak private data into git.
+CHAIN has two writable roots: `chain_home` (default ~/.chain — machine state and the
+durable library) and the review root (fixed: __READY_TO_REVIEW__PRIVATE_GITIGNORED/,
+where generated output waits for human review). Each must resolve OUTSIDE the
+repository, or (if kept local, e.g. for the demo) under a gitignored prefix such as
+`.chain/`. This lets a preflight (`chain doctor`) and the test-suite assert that CHAIN
+can never leak private data into git.
 
-`chain_home` is SAFE when either:
+A writable root is SAFE when either:
   * it resolves outside the repository tree, or
   * it is inside the repo but under a gitignored prefix.
 
@@ -24,8 +25,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # Repo-relative prefixes that .gitignore keeps out of git and that CHAIN may write
-# into when chain_home is kept local (the default ~/.chain lives outside the repo).
-IGNORED_WRITABLE_PREFIXES = (".chain",)
+# into: `.chain/` when chain_home is kept local (default ~/.chain lives outside the
+# repo), and the review root, which lives in-repo by default.
+IGNORED_WRITABLE_PREFIXES = (".chain", "__READY_TO_REVIEW__PRIVATE_GITIGNORED")
 
 
 @dataclass(frozen=True)

@@ -5,7 +5,7 @@ Deterministic harness; the two creative roles are portable LLM agents injected a
 `writer_fn` and `evaluator_fn`. The harness runs the mechanical lint, enforces the ONE
 bounded revision cycle (ALWAYS run, even on a strong draft — see below), enforces
 protect-marked passages mechanically, and assembles a private **draft packet** into
-chain_home/workspace. It writes nothing public and copies no full source library — only
+__READY_TO_REVIEW__PRIVATE_GITIGNORED/. It writes nothing public and copies no full source library — only
 the run's own draft, baseline, and packet. It also persists the finished Piece into the
 editorial library and advances the originating Idea's lifecycle — production is not
 "done" until the library reflects it.

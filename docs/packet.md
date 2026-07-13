@@ -8,7 +8,7 @@ the writer never grades its own work. (A long-form + companion pair will later p
 
 A committed synthetic example lives at
 [`examples/sample-draft-packet.md`](../examples/sample-draft-packet.md); real draft
-packets stay under the private `chain_home/workspace/`.
+packets land under the private `__READY_TO_REVIEW__PRIVATE_GITIGNORED/`.
 
 ## Anatomy
 

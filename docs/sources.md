@@ -89,5 +89,5 @@ and prefer exporting text. CHAIN ships no document-extraction subsystem in V1.
 ## Privacy
 
 Sources are read-only and never copied into git or into a permanent CHAIN location.
-What CHAIN derives from them lands only in the gitignored `chain_home/workspace/`. See
-[privacy.md](privacy.md).
+What CHAIN derives from them lands only in the gitignored
+`__READY_TO_REVIEW__PRIVATE_GITIGNORED/`. See [privacy.md](privacy.md).
