@@ -73,7 +73,7 @@ PIECES_FIELDS = [
     "status",             # draft | published | parked
     "pub_date",
     "url",                # where it lives once published (reference, not a copy)
-    "final_text_path",    # workspace draft path (disposable) or your canonical file
+    "final_text_path",    # review-root draft path or your canonical file (reference, not a copy)
     "parent_piece_id",    # e.g. the long-form piece a companion belongs to
     "related_piece_ids",  # "|"-delimited PIECE-ids
     "relation_type",      # companion-of | expands | condenses | promotes | follows-up

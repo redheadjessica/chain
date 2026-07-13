@@ -262,7 +262,7 @@ def run_production(brief, *, config, writer_fn, evaluator_fn, library, voice_spe
         lint_final.append({"level": "warn", "code": "must-fix-declined",
                            "message": f"writer declined required correction(s): {names}"})
 
-    # 5. Write baseline + final + packet (private workspace)
+    # 5. Write baseline + final + packet (private review root)
     slug = brief.get("slug", fmt)
     out_dir = Path(config["workspace_dir"]) / run_id / brief.get("idea_id", "idea") / slug
     out_dir.mkdir(parents=True, exist_ok=True)

@@ -152,8 +152,8 @@ it produced. Every run:
 
 The ledger and cache store references, hashes, extracted metadata, narrowly necessary
 excerpts, and normalized indexes — **never full copies of your files.** The cache is
-not a second archive of your corpus. (Single source of truth; the Workspace remains the
-only disposable-copy exception.)
+not a second archive of your corpus. (Single source of truth; generated output is the
+one thing CHAIN originates rather than references — see the review root above.)
 
 ---
 
@@ -361,7 +361,9 @@ post manually — CHAIN never publishes. Learning stays grounded and low-overhea
   The confirmed final text is ground truth; *generalized rules still require your
   confirmation.*
 
-All learned state lives in `chain_home`, never in git. Engagement-driven learning is V2.
+All learned state (the library, feedback, confirmations) lives in `chain_home`; the
+generated draft/final text itself lives in the review root — neither is ever in git.
+Engagement-driven learning is V2.
 
 ---
 

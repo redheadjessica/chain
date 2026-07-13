@@ -58,7 +58,8 @@ python3 -m chain.intake --reviewed voice_spec       # stamp last_reviewed
 `--set-path` is only needed when a file lives somewhere non-default — assets created
 at their default `chain_home` location are detected automatically on the next run.
 Relative paths in configs resolve against the current working directory: run the CLI
-from the repo root, or use absolute paths in configs you keep elsewhere.
+from `ENGINE__PUBLIC_GIT_TRACKED/` (this repo's engine root), or use absolute paths
+in configs you keep elsewhere.
 `--skip` silences recommended as well as optional assets (a deliberate "not for me"
 is respected); only the four required assets can't be skipped.
 
@@ -99,10 +100,10 @@ it without anyone vouching for it; `user-provided` means a human confirmed it.
 ## Privacy (church and state)
 
 The repo ships mechanism: intake logic, templates, prompts, docs, synthetic personas,
-tests. The user's voice spec, strategy, corpus, drafts, feedback, source paths, and
-manifest live in `chain_home` or wherever the user already keeps them — external or
-gitignored, always. The intake agent is forbidden from writing user content inside
-the repo. See [privacy.md](privacy.md).
+tests. The user's voice spec, strategy, corpus, feedback, source paths, and manifest
+live in `chain_home` or wherever the user already keeps them; drafts live in the
+review root — external or gitignored, always. The intake agent is forbidden from
+writing user content anywhere git-tracked. See [privacy.md](privacy.md).
 
 ## Lessons from the first real onboarding (reference case, de-identified)
 

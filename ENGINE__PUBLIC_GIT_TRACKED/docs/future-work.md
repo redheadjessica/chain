@@ -58,4 +58,5 @@ here gets quietly built early. V1 scope is the [architecture](architecture.md).
 - **The prepares-not-publishes guardrail is permanent.** No CHAIN version posts on
   your behalf.
 - **The public/private firewall is permanent.** New features add mechanism to the
-  repo and data to chain_home — never personal data to git.
+  repo, learned state to `chain_home`, and generated output to the review root —
+  never personal data to git.

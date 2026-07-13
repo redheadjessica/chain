@@ -33,9 +33,26 @@ See [docs/architecture.md](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md#desig
   already lives.
 
 "Writing" always means *published* work; unfinished work is a **Draft**. Internally
-these are rows in two human-editable CSVs under your `chain_home` (default `~/.chain`),
-the one writable location CHAIN owns; Drafts and Published writing are status views of
-the same rows.
+these are rows in two human-editable CSVs under your `chain_home` (default `~/.chain`);
+Drafts and Published writing are status views of the same rows. The row is metadata —
+the actual draft text a Draft's row points at lives in the review root (below), not in
+`chain_home`.
+
+## Folders
+
+CHAIN's repo has three roots, matched to who each is for:
+
+- **`ENGINE__PUBLIC_GIT_TRACKED/`** — the public mechanism (`chain/`, `canon/`, `docs/`,
+  `examples/`, `tests/`). Git-tracked. You rarely edit this.
+- **`PRIVATE__YOUR_FILES_GITIGNORED/`** — your real config plus visible symlinks to
+  wherever your actual writing/sources/canon already live. Gitignored — never
+  committed. Inspect it to see exactly what CHAIN reads.
+- **`__READY_TO_REVIEW__PRIVATE_GITIGNORED/`** — every draft and packet CHAIN
+  generates, waiting on you. Gitignored — never committed.
+
+Anything hidden (`.chain/`, `.git/`, caches) is machine state you're not expected to
+browse. See [docs/architecture.md](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md#where-things-live)
+for the full model.
 
 ## How it works
 

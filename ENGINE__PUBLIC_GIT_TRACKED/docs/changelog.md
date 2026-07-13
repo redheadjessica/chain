@@ -95,6 +95,27 @@ into readable threads.
   Batch 1 introduced the in-repo (gitignored) `PRIVATE__YOUR_FILES_GITIGNORED/`.
   `chain doctor` and the full suite (119 tests, verified from both the true root and
   ENGINE) confirm clean.
+- Batch 4 (docs/UX polish, no structural change): swept every doc for the "Workspace"
+  concept Batch 2 retired — `architecture.md` had two survivors (design principle 2's
+  worked example, and "all learned state lives in chain_home," both now wrong since
+  generated output moved out), plus stale comments in `editorial_library.py` and
+  `produce.py`, plus one in `examples/sample-bundle-packet.md`. `docs/intake.md` said
+  "run the CLI from the repo root" (now wrong — it's ENGINE__PUBLIC_GIT_TRACKED/) and
+  listed drafts as living in `chain_home` (they don't anymore); repeated the same
+  stale "forbidden from writing inside the repo" privacy claim `chain-intake.md`/`.toml`
+  already had fixed in Batch 3.
+  README.md had no explanation of the three-root model anywhere — a new user would
+  hit `PRIVATE__YOUR_FILES_GITIGNORED` and `ENGINE__PUBLIC_GIT_TRACKED` in the
+  Quickstart with zero context. Added a "Folders" section (before Quickstart, so the
+  names are explained before they appear in a command) and corrected "Core concepts"
+  — a Draft's CSV row is metadata; the actual text lives in the review root, not
+  `chain_home`.
+  Explicitly deferred, per direction: "run chain commands from
+  ENGINE__PUBLIC_GIT_TRACKED/" stays exactly as Batch 3 left it. This is real technical
+  debt, not a docs gap — long-term, a user should be able to run CHAIN from the repo
+  root without knowing where the engine physically lives. Not solved this pass;
+  tracked as a running ENGINE-internal observation, see below.
+  Full suite (119 tests) still green; no code paths changed, comments/docs only.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 

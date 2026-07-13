@@ -10,7 +10,7 @@ Idea: IDEA-0005 · two Drafts (long-form + companion)
 ## Long-form draft — medium
 > We spent the last two years arguing about model quality. … The hardest thing about
 > shipping an AI feature isn't the model. It's making what the model did legible to the
-> person who didn't build it. … *(≈900-word essay; full text in the workspace)*
+> person who didn't build it. … *(≈900-word essay; full text in the review root)*
 
 - Voice 4/5 · Positioning 4/5 · verdict: Good candidate with one issue to review
 
