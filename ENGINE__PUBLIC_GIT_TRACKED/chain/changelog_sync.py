@@ -11,13 +11,13 @@ API. It only does the deterministic parts: gathering evidence, validating/normal
 structure, and managing the processed-through marker. Stdlib-only, like
 `path_safety.py` and `editorial_library.py`.
 
-Usage (run from ENGINE__PUBLIC_GIT_TRACKED/, this module's own directory):
-    python3 -m chain.changelog_sync --mark-current   # establish/advance the baseline
-    python3 -m chain.changelog_sync --normalize-only  # structure/ordering check
-    python3 -m chain.changelog_sync                   # print evidence for an agent to
-                                                       # consolidate, or confirm no-op
-    python3 -m chain.changelog_sync --force           # print evidence even with no
-                                                       # meaningful diff
+Usage (run from the repo root; ./chain finds the engine for you):
+    ./chain changelog_sync --mark-current   # establish/advance the baseline
+    ./chain changelog_sync --normalize-only  # structure/ordering check
+    ./chain changelog_sync                   # print evidence for an agent to
+                                              # consolidate, or confirm no-op
+    ./chain changelog_sync --force           # print evidence even with no
+                                              # meaningful diff
 """
 
 from __future__ import annotations
@@ -126,9 +126,9 @@ def print_evidence(changelog: str, evidence: dict) -> None:
         "\n→ Next: consolidate the rough entries above into readable change threads "
         "directly in docs/changelog.md (preserve already-curated older history), "
         "update docs/architecture.md from the curated changelog if it changed "
-        "meaningfully, then run (from ENGINE__PUBLIC_GIT_TRACKED/):\n"
-        "    python3 -m chain.changelog_sync --normalize-only\n"
-        "    python3 -m chain.changelog_sync --mark-current"
+        "meaningfully, then run (from the repo root):\n"
+        "    ./chain changelog_sync --normalize-only\n"
+        "    ./chain changelog_sync --mark-current"
     )
 
 

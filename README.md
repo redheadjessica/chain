@@ -80,14 +80,21 @@ run. See [docs/architecture.md](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md)
 
 ## Quickstart
 
+Everything runs from the repo root — `./chain` is a small launcher that finds the
+engine for you (see [Folders](#folders) above).
+
 ```bash
 git clone <this repo> && cd chain
 mkdir -p PRIVATE__YOUR_FILES_GITIGNORED
 cp chain.config.example.yaml PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml  # point paths at your folders
-cd ENGINE__PUBLIC_GIT_TRACKED                           # the engine lives here
-python3 -m unittest discover -s tests                   # runs with zero installs
-python3 -m chain.editorial_library validate examples/demo-home/library
+python3 -m unittest discover -s ENGINE__PUBLIC_GIT_TRACKED/tests   # runs with zero installs
+./chain doctor                                          # preflight: firewall, library, sources
+./chain editorial_library validate examples/demo-home/library
 ```
+
+`./chain <module> [args...]` runs `python3 -m chain.<module> [args...]` for you —
+picks up a project `.venv` automatically if you have one, otherwise falls back to
+`python3` on your PATH. Run `./chain` with no arguments to see what's runnable.
 
 The `examples/` synthetic persona lets you see the data model with **no private data**.
 
@@ -99,8 +106,7 @@ every coding agent** — see `CLAUDE.md` → "Repo changelog". Synthesis (consol
 entries into readable threads and refreshing
 `ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md`) is a separate, occasional pass you
 ask an active Claude Code or Codex session to run; it calls no AI API itself — see
-`python3 -m chain.changelog_sync`'s module docstring (run from
-`ENGINE__PUBLIC_GIT_TRACKED/`, alongside `docs/`).
+`./chain changelog_sync`'s module docstring.
 
 ## Docs
 

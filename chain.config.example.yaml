@@ -20,8 +20,8 @@ chain_home: ~/.chain
 
 # --- Intake: how much model-assisted setup you want to pay for ---------------
 # Full adaptive onboarding (assess/improve/create every editorial input at any
-# maturity level): `python3 -m chain.intake` (run from ENGINE__PUBLIC_GIT_TRACKED/) +
-# the chain-intake agent. See ENGINE__PUBLIC_GIT_TRACKED/docs/intake.md.
+# maturity level): `./chain intake` (run from the repo root) + the chain-intake agent.
+# See ENGINE__PUBLIC_GIT_TRACKED/docs/intake.md.
 # manual   : you map sources yourself below; deterministic indexing, ~no model cost.
 # assisted : CHAIN samples a few files, proposes a mapping, you confirm (recommended).
 # deep     : CHAIN inspects a broader/messier corpus and proposes a mapping (opt-in,

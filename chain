@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# CHAIN launcher — run CHAIN from the repository root without needing to know that
+# the actual Python package lives under ENGINE__PUBLIC_GIT_TRACKED/.
+#
+# Usage: ./chain <module> [args...]
+#   e.g. ./chain doctor
+#        ./chain intake examples/demo.config.yaml --json
+#        ./chain intake --help
+#
+# This is dispatch only — it owns no CLI logic of its own. It resolves the repo/engine
+# paths from its own location (not the caller's CWD), picks a Python interpreter
+# (project .venv if present, else python3 on PATH), cds into the engine directory so
+# `chain` is importable and every config's engine-relative paths resolve correctly,
+# then execs `python3 -m chain.<module> [args...]` — forwarding all arguments and the
+# exact exit code. Each chain.<module> owns its own arguments, including --help.
+#
+# macOS/Linux only for now (bash). A cross-platform launcher is future work.
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENGINE_DIR="$REPO_ROOT/ENGINE__PUBLIC_GIT_TRACKED"
+CHAIN_PKG_DIR="$ENGINE_DIR/chain"
+
+if [ ! -d "$CHAIN_PKG_DIR" ]; then
+  echo "chain: can't find ENGINE__PUBLIC_GIT_TRACKED/chain/ next to this script." >&2
+  echo "  Expected it at: $CHAIN_PKG_DIR" >&2
+  echo "  Run this from a real checkout of the CHAIN repo (or reclone if it looks corrupted)." >&2
+  exit 1
+fi
+
+if [ -x "$REPO_ROOT/.venv/bin/python3" ]; then
+  PYTHON="$REPO_ROOT/.venv/bin/python3"
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON="$(command -v python3)"
+else
+  echo "chain: no python3 found — not on PATH, and no .venv/bin/python3 either." >&2
+  echo "  Install Python 3.9+, or create a project venv:" >&2
+  echo "    python3 -m venv .venv && .venv/bin/pip install pyyaml" >&2
+  exit 1
+fi
+
+if ! "$PYTHON" -c "import yaml" >/dev/null 2>&1; then
+  echo "chain: $PYTHON can't import PyYAML (CHAIN's one runtime dependency)." >&2
+  echo "  Fix by either:" >&2
+  echo "    $PYTHON -m pip install pyyaml" >&2
+  echo "  or create a project venv CHAIN will prefer automatically:" >&2
+  echo "    python3 -m venv .venv && .venv/bin/pip install pyyaml" >&2
+  exit 1
+fi
+
+known_modules() {
+  (cd "$CHAIN_PKG_DIR" && grep -l '__main__' -- *.py 2>/dev/null | sed 's/\.py$//' | sort | tr '\n' ' ')
+}
+
+if [ "$#" -lt 1 ]; then
+  echo "Usage: ./chain <module> [args...]" >&2
+  echo "Runs: python3 -m chain.<module> [args...], from ENGINE__PUBLIC_GIT_TRACKED/." >&2
+  echo "Runnable modules: $(known_modules)" >&2
+  echo "Each module has its own --help, e.g. ./chain intake --help" >&2
+  exit 1
+fi
+
+MODULE="$1"
+shift
+
+if [ ! -f "$CHAIN_PKG_DIR/$MODULE.py" ]; then
+  echo "chain: no such module 'chain.$MODULE' (looked for $CHAIN_PKG_DIR/$MODULE.py)." >&2
+  echo "  Runnable modules: $(known_modules)" >&2
+  exit 1
+fi
+
+cd "$ENGINE_DIR"
+exec "$PYTHON" -m "chain.$MODULE" "$@"

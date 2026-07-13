@@ -22,10 +22,11 @@ their material; adapt to their world.
 
 ## The deterministic core runs first
 
-Always start with (run from `ENGINE__PUBLIC_GIT_TRACKED/`, this repo's engine root —
-every path below, e.g. `canon/...`, is relative to that same directory):
+Always start with, run from the repo root (`./chain` finds the engine for you — paths
+below, e.g. `canon/...`, are relative to `ENGINE__PUBLIC_GIT_TRACKED/`, where `./chain`
+actually runs commands from):
 
-    python3 -m chain.intake [config] --json
+    ./chain intake [config] --json
 
 That gives you: per-asset status (`exists` / `partial` / `missing`), the computed
 maturity level, the plan (smallest useful step per gap, blockers first), and the

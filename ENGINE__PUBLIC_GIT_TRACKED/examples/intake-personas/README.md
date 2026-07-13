@@ -1,10 +1,11 @@
 # Intake personas (synthetic)
 
 Three committed test personas covering the intake maturity model — no private data.
-Each has a config; run the deterministic intake against any of them (from
-`ENGINE__PUBLIC_GIT_TRACKED/`, this repo's engine root):
+Each has a config; run the deterministic intake against any of them, from the repo
+root (paths are relative to `ENGINE__PUBLIC_GIT_TRACKED/`, where `./chain` runs
+commands from):
 
-    python3 -m chain.intake examples/intake-personas/p1-organized.config.yaml
+    ./chain intake examples/intake-personas/p1-organized.config.yaml
 
 | Persona | Level | Proves |
 |---|---|---|

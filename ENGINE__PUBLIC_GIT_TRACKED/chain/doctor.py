@@ -70,7 +70,7 @@ def run_doctor(config: dict, repo_root) -> list:
         checks.append(Check("ok", "intake", f"manifest present ({mpath})"))
     else:
         checks.append(Check("warn", "intake",
-                            "no intake manifest yet — run: python3 -m chain.intake"))
+                            "no intake manifest yet — run: ./chain intake"))
 
     # 4. sources exist
     for sd in config.get("sources", []):

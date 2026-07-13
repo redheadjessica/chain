@@ -116,6 +116,39 @@ into readable threads.
   root without knowing where the engine physically lives. Not solved this pass;
   tracked as a running ENGINE-internal observation, see below.
   Full suite (119 tests) still green; no code paths changed, comments/docs only.
+- Batch 5: resolved that debt with a root-level launcher rather than an install step
+  or global PYTHONPATH change. New tracked, executable `./chain` (bash) at the repo
+  root: resolves its own location to find `ENGINE__PUBLIC_GIT_TRACKED/` regardless of
+  the caller's CWD, prefers `.venv/bin/python3` over PATH `python3` when present,
+  verifies PyYAML is importable before doing anything else (clear actionable message
+  + exit 1 if not — install pyyaml or create `.venv`), then `cd`s into the engine dir
+  and `exec`s `python3 -m chain.<module> "$@"` — no CLI logic duplicated here, each
+  `chain.*` module still owns its own arguments (including `--help`), and `exec`
+  forwards the exact exit code rather than wrapping it. `./chain` with no args or an
+  unrecognized module name lists real runnable modules, discovered by grepping for
+  `__main__` blocks in `chain/*.py` rather than a hardcoded list that could drift.
+  Verified for real, not just read: `./chain doctor`, `./chain intake --help`,
+  argument forwarding on a real intake run (`./chain intake
+  examples/demo.config.yaml --json` — confirmed real file counts, not just echoed
+  config), exit-code forwarding on both success and argparse failure (2), and two
+  failure-path simulations with an isolated PATH (no python3 anywhere → clear message
+  + exit 1; python3 present but PyYAML unimportable → clear message + exit 1). One
+  design note worth keeping in mind for anyone touching this script later: relative
+  path *arguments* the user passes to `./chain <module>` (e.g. a config path) are
+  resolved relative to `ENGINE__PUBLIC_GIT_TRACKED/`, where the command actually
+  executes — not the repo root the user is standing in. Caught this myself
+  mid-implementation by testing with the wrong-context path and silently getting
+  the example config's placeholder defaults back instead of real data; the fix was
+  documenting it clearly (the script's own usage text says so), not trying to
+  rewrite path arguments, which would have meant guessing which arguments are paths.
+  Updated every place that told a user/agent to `cd ENGINE__PUBLIC_GIT_TRACKED/` first
+  (README Quickstart, both `chain-intake` agent files, `chain.config.example.yaml`,
+  `docs/intake.md`, `examples/intake-personas/README.md`) to use `./chain <module>`
+  from the repo root instead, and updated the two runtime messages
+  (`changelog_sync.py`, `doctor.py`) that suggested the old `python3 -m chain.X` form.
+  README also gained a one-line pointer to `./chain` ahead of the Quickstart block.
+  Did not touch `canon/`, `docs/`, or `examples/` organization — that's still open,
+  see the running observations below. Full suite (119 tests) green.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 

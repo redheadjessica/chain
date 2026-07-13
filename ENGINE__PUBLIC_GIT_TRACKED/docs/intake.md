@@ -14,7 +14,7 @@ collaboratively.
 
 | Half | What it does | Cost |
 |---|---|---|
-| **Deterministic core** — `python3 -m chain.intake` | inspects sources + assets, classifies each, computes your maturity level, generates the plan (blockers first), writes the durable manifest, prints the one progress summary | zero tokens |
+| **Deterministic core** — `./chain intake` | inspects sources + assets, classifies each, computes your maturity level, generates the plan (blockers first), writes the durable manifest, prints the one progress summary | zero tokens |
 | **Collaborative layer** — the `chain-intake` agent | locates scattered material, proposes source maps, interviews, runs writing exercises, distills guidance from raw material, creates first versions from `canon/*.template.md` | model-backed |
 
 The agent always runs the core first and works from its report; the core is
@@ -46,24 +46,26 @@ may recommend a layout to someone starting from scratch; it never requires one.
 
 ## Commands
 
+Run from the repo root — `./chain` finds the engine for you:
+
 ```bash
-python3 -m chain.intake                      # inspect, plan, update manifest, summary
-python3 -m chain.intake my.config.yaml --json
-python3 -m chain.intake --set-path themes=~/notes/what-i-write-about.md
-python3 -m chain.intake --mark voice_spec=created   # user-provided | improved | created
-python3 -m chain.intake --skip story_bank           # anything except required assets
-python3 -m chain.intake --reviewed voice_spec       # stamp last_reviewed
+./chain intake                      # inspect, plan, update manifest, summary
+./chain intake my.config.yaml --json
+./chain intake --set-path themes=~/notes/what-i-write-about.md
+./chain intake --mark voice_spec=created   # user-provided | improved | created
+./chain intake --skip story_bank           # anything except required assets
+./chain intake --reviewed voice_spec       # stamp last_reviewed
 ```
 
 `--set-path` is only needed when a file lives somewhere non-default — assets created
 at their default `chain_home` location are detected automatically on the next run.
-Relative paths in configs resolve against the current working directory: run the CLI
-from `ENGINE__PUBLIC_GIT_TRACKED/` (this repo's engine root), or use absolute paths
-in configs you keep elsewhere.
+Relative paths in a config resolve against `ENGINE__PUBLIC_GIT_TRACKED/` (where
+`./chain` actually runs commands from) — use absolute paths in configs you keep
+elsewhere to avoid depending on that.
 `--skip` silences recommended as well as optional assets (a deliberate "not for me"
 is respected); only the four required assets can't be skipped.
 
-`chain doctor` warns when no manifest exists yet. The collaborative flow: open the
+`./chain doctor` warns when no manifest exists yet. The collaborative flow: open the
 repo in Claude Code and ask for intake — the `chain-intake` agent handles the rest,
 one asset at a time, per `canon/intake-interview-guide.md`.
 
