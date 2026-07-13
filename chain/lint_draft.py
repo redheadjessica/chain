@@ -24,6 +24,11 @@ from pathlib import Path
 
 MD_LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 
+# Quote characters used to detect a MENTION ("the word 'leverage' is banned") vs a
+# live USE (leveraging our synergies) of a banned phrase. Deliberately simple — a
+# proximity heuristic, not a parser. See _is_quoted_mention.
+QUOTE_CHARS = '"\'“”‘’'
+
 # Generic, persona-neutral AI-fingerprint phrases (mechanical, high-precision only).
 GENERIC_BANNED = [
     (r"\bdelve\w*\b", 'AI-tell vocab: "delve"'),
@@ -58,6 +63,50 @@ def _finding(level, code, message):
     return {"level": level, "code": code, "message": message}
 
 
+def _is_quoted_mention(prose: str, start: int, end: int) -> bool:
+    """True if the match at [start:end) is immediately quoted — a MENTION of the
+    phrase, not a live use of it. Simple proximity check, not a parser: the char
+    right before the match must be a quote, and a quote must appear within a few
+    trailing punctuation characters after it."""
+    before = prose[max(0, start - 1):start]
+    if not before or before[-1] not in QUOTE_CHARS:
+        return False
+    tail = prose[end:end + 5]
+    for ch in tail:
+        if ch in QUOTE_CHARS:
+            return True
+        if ch not in ",;:. -":
+            break
+    return False
+
+
+def load_lint_overrides(path) -> dict:
+    """Load a user's personal lint overrides (banned_phrases/watch_words/channels)
+    from a YAML file outside the repo. Missing/unset path -> {} (generic behavior
+    unaffected) — the shipped linter stays persona-neutral by default."""
+    p = Path(str(path)).expanduser() if path else None
+    if not p or not p.exists():
+        return {}
+    import yaml
+    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    return {
+        "banned_phrases": list(data.get("banned_phrases") or []),
+        "watch_words": list(data.get("watch_words") or []),
+        "channels": dict(data.get("channels") or {}),
+    }
+
+
+def _channel_pack(channel: str, overrides: dict) -> dict:
+    base = dict(CHANNEL_PACKS.get(channel, CHANNEL_PACKS["neutral"]))
+    over = (overrides or {}).get("channels", {}).get(channel, {})
+    if "max_external_links_in_body" in over:   # template's public field name
+        base["max_body_links"] = over["max_external_links_in_body"]
+    for k in ("max_hashtags", "emoji_ok", "max_body_links"):
+        if k in over:
+            base[k] = over[k]
+    return base
+
+
 def prose_and_links(text: str):
     links = [(m.group(1), m.group(2)) for m in MD_LINK.finditer(text)]
     prose = MD_LINK.sub(r"\1", text)
@@ -79,7 +128,7 @@ def lint_draft(text, *, fmt="short_form", channel="neutral", overrides=None,
     findings = []
 
     fp = FORMAT_PACKS.get(fmt, FORMAT_PACKS["custom"])
-    cp = CHANNEL_PACKS.get(channel, CHANNEL_PACKS["neutral"])
+    cp = _channel_pack(channel, overrides)
 
     # --- required content ---
     if not prose.strip():
@@ -94,12 +143,27 @@ def lint_draft(text, *, fmt="short_form", channel="neutral", overrides=None,
                                  f"{words} words < {fp['min_words']} suggested for {fmt}"))
 
     # --- banned phrases (generic + personal overrides) ---
+    # Each OCCURRENCE is classified separately: a live use is an error; a match
+    # immediately wrapped in quotes (citing the phrase, not using it) is auto-
+    # classified as a known false positive and downgraded to warn, per-occurrence —
+    # so a draft that both quotes and uses a banned phrase gets both right.
     for pat, msg in GENERIC_BANNED:
-        if re.search(pat, prose, re.IGNORECASE):
-            findings.append(_finding("error", "banned-phrase", msg))
+        for m in re.finditer(pat, prose, re.IGNORECASE):
+            if _is_quoted_mention(prose, m.start(), m.end()):
+                findings.append(_finding(
+                    "warn", "banned-phrase-quoted-mention",
+                    f"{msg} — quoted mention, not a live use (auto-classified false positive)"))
+            else:
+                findings.append(_finding("error", "banned-phrase", msg))
     for phrase in overrides.get("banned_phrases", []):
-        if re.search(re.escape(phrase), prose, re.IGNORECASE):
-            findings.append(_finding("error", "banned-phrase", f'personal banned phrase: "{phrase}"'))
+        for m in re.finditer(re.escape(phrase), prose, re.IGNORECASE):
+            if _is_quoted_mention(prose, m.start(), m.end()):
+                findings.append(_finding(
+                    "warn", "banned-phrase-quoted-mention",
+                    f'personal banned phrase: "{phrase}" — quoted mention, not a live use '
+                    "(auto-classified false positive)"))
+            else:
+                findings.append(_finding("error", "banned-phrase", f'personal banned phrase: "{phrase}"'))
     for phrase in overrides.get("watch_words", []):
         if re.search(re.escape(phrase), prose, re.IGNORECASE):
             findings.append(_finding("warn", "watch-word", f'watch word: "{phrase}"'))
@@ -129,10 +193,13 @@ def lint_draft(text, *, fmt="short_form", channel="neutral", overrides=None,
             findings.append(_finding("error", "smoothing",
                                      f"link removed in revision: {lost} (links may move, not vanish)"))
         tps = [t.lower() for t in (touchpoints or [])]
+        new_sentences = _sentences(prose)
         for sent in _sentences(p_prose):
-            if any(tp and tp in sent.lower() for tp in tps):
+            if _is_cited(sent.lower(), tps):
                 continue  # this sentence was cited for change — allowed to move
-            best = max((_ratio(sent, c) for c in _sentences(prose)), default=0.0)
+            if any(_text_overlap(sent.lower(), c.lower()) for c in new_sentences):
+                continue  # content survived intact, even if merged/reworded nearby
+            best = max((_ratio(sent, c) for c in new_sentences), default=0.0)
             if best < 0.7:
                 findings.append(_finding(
                     "error", "smoothing",
@@ -145,6 +212,29 @@ def lint_draft(text, *, fmt="short_form", channel="neutral", overrides=None,
 def _ratio(a, b):
     import difflib
     return difflib.SequenceMatcher(None, a.lower(), b.lower()).ratio()
+
+
+def _text_overlap(a_lower: str, b_lower: str) -> bool:
+    """True if a's content is essentially contained in b, or vice versa — either a
+    literal substring (handles a quote spanning multiple sentences, or several
+    sentences merging into one) or high token overlap (handles light rewording).
+    Deliberately generous: this recognizes "this content survived" without relying
+    on whole-string character ratio, which false-positives whenever a merge or a
+    multi-sentence quote dilutes the two strings' relative lengths."""
+    if not a_lower or not b_lower:
+        return False
+    if a_lower in b_lower or b_lower in a_lower:
+        return True
+    a_words = set(re.findall(r"[a-z']+", a_lower))
+    b_words = set(re.findall(r"[a-z']+", b_lower))
+    return bool(a_words) and len(a_words & b_words) / len(a_words) >= 0.6
+
+
+def _is_cited(sent_lower: str, touchpoints_lower: list) -> bool:
+    """True if a (lowercased) sentence was cited by a finding's quote — a quote that's
+    a fragment WITHIN one sentence (the common case), or one that SPANS multiple
+    original sentences (the evaluator cited "X. Y." across a sentence boundary)."""
+    return any(_text_overlap(sent_lower, tp) for tp in touchpoints_lower)
 
 
 def has_errors(findings):

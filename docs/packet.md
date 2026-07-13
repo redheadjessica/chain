@@ -17,37 +17,66 @@ packets stay under the private `chain_home/workspace/`.
 
 ## The draft
 <paste-ready text>
-(channel-conditional extras, e.g. LinkedIn: suggested first comment for any link,
- suggested posting window)
+
+## What shaped this draft
+- Idea + Piece id, format/channel
+- how this idea was selected (automatic / user-directed / manual, with the factors —
+  or an honest "not recorded" if no selection event was logged)
+- voice guidance, positioning guidance, lint overrides, and feedback ledger consulted
+  (paths/names — never full excerpts)
+- source materials referenced (source:ref list)
+- exemplars referenced, or "None referenced this run"
 
 ## Scorecard
-Positioning Impact <n>/5 · Voice <n>/5 — <n> must-fix, all resolved · lint clean
+- Voice <n>/5 · Positioning Impact <n>/5
+- Pre-revision verdict (what the FIRST draft would have scored)
+- Findings this run, by severity: must-fix / improvement / protect / consideration
+
+## Revision
+- Findings addressed (by id, with what changed)
+- Findings declined (by id, with the writer's reason — includes any declined
+  must-fix, flagged loudly, never silently dropped)
+- Protected language (evaluator-marked passages; mechanically verified to survive
+  verbatim in the final text)
+- Questions for you
+
+## Final lint status
+- clean, OR the unresolved error(s)
+- known false positives auto-classified (e.g. a banned phrase used only as a quoted
+  example, not a live use) — shown, not hidden
+- any other flags (e.g. a revision-integrity note)
 
 ## Why CHAIN chose this
-- why the idea is worth writing
-- which source patterns / materials led to it
-- why it is relevant now
-- how it differs from what you've already covered
-
-## What this communicates about you
-- primary positioning pillar
-- optional secondary pillar
-- what a relevant hiring manager or product leader may learn about you
-
+## What this communicates
 ## Why you have standing to say it
-- the experience, work, or existing writing that makes the point feel earned
-
 ## Reasonable publication risk
-- the most plausible way it could be misunderstood
-- whether that reflects a real communication problem
-- whether a clarification is needed, or it is simply the unavoidable exposure of an opinion
 
 ## Editorial verdict
 <one of the five verdicts>
 
-## Questions for you
-<open questions + declined-fix disagreements; "None" if empty>
+## What CHAIN may learn from this run
+- what CHAIN may retain if you feed it back (your final edit, explicit feedback,
+  approved reusable lessons)
+- what it will NOT auto-learn (its own draft, evaluator opinions alone, unapproved
+  inferred preferences, rejected language reappearing)
 ```
+
+## The loop is always Draft → Evaluate → Revise → Reevaluate
+
+The bounded revision pass always runs, even on a draft that scores 5/5 with zero
+must-fix findings — the evaluator is expected to surface *something* (an improvement,
+a protect note) on nearly every draft. A revision that changes nothing is a valid but
+rare outcome, and only legitimate when every finding was explicitly declined with a
+reason; the packet says so plainly rather than silently showing `draft-v1.md` and
+`final.md` as identical.
+
+## Every draft packet is a persisted Piece
+
+Reaching a packet is not the end of the story for the library: `run_production`
+always persists a `PIECE-xxxx` row (status `final`, never `published` — that's your
+call) and advances the originating Idea past `proposed`/`developing` to `produced`.
+One Idea may produce several Pieces over time, in different formats — a short-form
+Piece never blocks the same Idea from later producing a long-form one.
 
 ## The five verdicts
 

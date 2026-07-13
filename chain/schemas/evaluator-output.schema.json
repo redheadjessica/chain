@@ -13,7 +13,11 @@
         "required": ["id", "severity", "quote", "why"],
         "properties": {
           "id": {"type": "string", "description": "stable finding id (F1, F2, ...) the writer references"},
-          "severity": {"type": "string", "enum": ["must-fix", "consideration"]},
+          "severity": {
+            "type": "string",
+            "enum": ["must-fix", "improvement", "protect", "consideration"],
+            "description": "must-fix: required correction, incl. any factual/mechanical misstatement the sources contradict. improvement: meaningful, optional, worth acting on. protect: exceptionally strong language the writer may NOT alter (its quote is mechanically verified to survive). consideration: minor, writer's call."
+          },
           "quote": {"type": "string", "description": "the exact passage the finding is about"},
           "why": {"type": "string"}
         }

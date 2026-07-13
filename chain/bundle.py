@@ -38,9 +38,10 @@ def validate_bundle(out) -> dict:
     return out
 
 
-def run_bundle(*, config, long_brief, companion_brief, writer_fn, evaluator_fn,
+def run_bundle(*, config, long_brief, companion_brief, writer_fn, evaluator_fn, library,
                voice_spec_text="", pillars=None, long_sources=None,
-               companion_sources=None, overrides=None, today=None, run_id=None):
+               companion_sources=None, overrides=None, selection=None,
+               today=None, run_id=None):
     if long_brief.get("idea_id") != companion_brief.get("idea_id"):
         raise ValueError("a bundle's long-form and companion must share one idea_id")
     if long_brief.get("format") != "long_form" or companion_brief.get("format") != "companion_post":
@@ -51,13 +52,19 @@ def run_bundle(*, config, long_brief, companion_brief, writer_fn, evaluator_fn,
     companion_brief.setdefault("slug", "companion_post")
 
     long_res = run_production(long_brief, config=config, writer_fn=writer_fn,
-                              evaluator_fn=evaluator_fn, voice_spec_text=voice_spec_text,
+                              evaluator_fn=evaluator_fn, library=library,
+                              voice_spec_text=voice_spec_text,
                               pillars=pillars, source_excerpts=long_sources,
-                              overrides=overrides, today=today, run_id=run_id)
+                              overrides=overrides, selection=selection,
+                              today=today, run_id=run_id)
+    companion_brief.setdefault("parent_piece_id", long_res.get("piece_id", ""))
+    companion_brief.setdefault("relation_type", "companion-of")
     comp_res = run_production(companion_brief, config=config, writer_fn=writer_fn,
-                             evaluator_fn=evaluator_fn, voice_spec_text=voice_spec_text,
+                             evaluator_fn=evaluator_fn, library=library,
+                             voice_spec_text=voice_spec_text,
                              pillars=pillars, source_excerpts=companion_sources,
-                             overrides=overrides, today=today, run_id=run_id)
+                             overrides=overrides, selection=selection,
+                             today=today, run_id=run_id)
 
     bundle = validate_bundle(evaluator_fn({
         "mode": "bundle",

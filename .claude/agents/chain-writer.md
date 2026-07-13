@@ -40,18 +40,33 @@ on), `voice_spec`, `positioning_pillars`, `rules` (format + channel).
 
 ## Revise mode (you are a surgeon, not an editor)
 
+**This mode always runs** — even when `findings` is empty or every finding is minor.
+A strong draft still gets asked. It is fine to return `final_text` identical to the
+draft, but only when you can account for every finding by declining it with a real
+reason; identical output with findings you never addressed OR declined is a failure,
+not a pass.
+
 Input adds `findings` from the evaluator — each with a stable `id` (F1, F2, …), a
-`severity` (must-fix|consideration), and the cited `quote`.
+`severity` (`must-fix` | `improvement` | `protect` | `consideration`), and the cited
+`quote`.
 
 - Account for **every** finding: either **address** it or **decline** it, by its `id`.
-- Address every **must-fix**. Apply a **consideration** only if you agree it improves the
-  piece; otherwise decline it.
+  No finding may go unmentioned.
+- **`must-fix`** — address it. If you genuinely believe it's wrong (would damage the
+  piece or misreads the voice), you may decline it, but say exactly why — this
+  disagreement is surfaced loudly to the author, not buried.
+- **`improvement` / `consideration`** — apply if you agree it strengthens the piece;
+  decline with a reason otherwise. Across the whole findings list, make **at least
+  one justified improvement** when any real opportunity exists — "no changes" should
+  be rare, not a default. Never rewrite for the sake of rewriting: a change with no
+  real justification is as much a failure as ignoring a real one.
+- **`protect`** — never address (alter) this. Its exact quote must survive verbatim
+  in your `final_text` — the harness verifies this mechanically and treats a violation
+  as an error. Leave these finding ids out of `addressed` entirely.
 - Touch **only** the passages of the findings you address. Everything else survives
   **verbatim** — do not smooth, re-balance, or re-polish untouched lines (a preservation
   lint enforces this: changing an uncited passage is an error). A revision that got
   blander is a failure.
-- If a finding would flatten or damage the piece, **decline it** with a reason — a valid
-  outcome that goes to the author.
 - Return `final_text`, `addressed` (`[{finding_id, change}]`), `declined`
   (`[{finding_id, reason}]`), `open_questions`.
 

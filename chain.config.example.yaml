@@ -35,6 +35,14 @@ intake:
 voice_spec: "{chain_home}/voice-spec.md"
 positioning_pillars: "{chain_home}/positioning-pillars.md"
 
+# Personal lint additions (banned_phrases / watch_words / channels) layered onto the
+# generic, persona-neutral rule set in lint_draft.py. Optional — see
+# canon/lint-overrides.template.md for the format. Empty/unset = generic behavior.
+lint_overrides: ""
+
+# Optional: where your feedback ledger lives (referenced in draft-packet provenance).
+feedback_ledger: ""
+
 # --- Sources (your existing folders, read-only, mapped in place) ------------
 # `type` is a free label for reading behavior (in V1 all text sources read alike).
 # `roles` are small, generic, domain-agnostic hints about the KIND of signal a source

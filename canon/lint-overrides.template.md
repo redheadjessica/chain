@@ -2,8 +2,9 @@
 
 `lint_draft.py` ships with a **generic, persona-neutral** rule set. Your *personal*
 additions — phrases you never use, tells specific to your writing — live here, in
-a file in your `chain_home`, so the public linter stays neutral. This ships as an
-empty template; copy it alongside your other canon references.
+a file in your `chain_home` (or wherever you keep canon), referenced by your
+config's `lint_overrides` key. This ships as an empty template; copy it and point
+`lint_overrides` at your copy — `chain.intake` also classifies it as an asset.
 
 The linter is **mechanical only**: it checks observable, deterministic things. Hook
 strength, originality, and editorial quality are the evaluator's job, never the
@@ -38,3 +39,12 @@ sections present · format-specific mechanical requirements.
 
 hook strength · originality · emotional impact · positioning · whether the piece is
 any good.
+
+## Mention vs. use
+
+If a draft *quotes* a banned phrase (e.g. citing it as an example of what to avoid),
+the linter auto-detects the surrounding quote marks and downgrades that occurrence
+to a `warn`-level "known false positive" instead of blocking the draft as an error.
+This is a simple proximity check, not a parser — it looks for a quote character
+immediately around the match. A banned phrase used live (not quoted) anywhere in
+the draft still errors normally.

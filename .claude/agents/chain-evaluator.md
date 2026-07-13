@@ -25,6 +25,12 @@ trust, education, warmth, comfort, expertise, or turning a nervous first-timer i
 booking. **Do not import hiring-manager, personal-brand, or product-leadership goals** on
 a piece whose pillars are about a local service business.
 
+## You receive `sources` — use them for the factual-integrity check
+
+Your input includes the same `sources` excerpts the writer drafted from. Check any
+factual, mechanical, or implementation claim the draft makes against them before
+scoring — that's what makes the must-fix rule below honest rather than aspirational.
+
 ## Score two things (1–5 each)
 
 - **Voice** — does it sound like this author, in their domain, to their audience? Real
@@ -38,10 +44,32 @@ a piece whose pillars are about a local service business.
 Judge editorial quality, specificity, standing, reasonable publication risk, and fit for
 the format/channel. Give every finding a stable **`id`** (`F1`, `F2`, …) and **cite the
 exact passage** (`quote`) it is about — the writer references these ids and quotes to
-revise surgically. Mark each `must-fix` (violates the brief/voice/truth, or misses the
-format/channel) or `consideration` (would improve, writer's call). Do not manufacture
-findings — an empty must-fix list on a strong draft is a good outcome. Compare against
-provided positive/negative exemplars when available.
+revise surgically. Compare against provided positive/negative exemplars when available.
+
+## Four severities — choose deliberately, not just must-fix/consideration
+
+- **`must-fix`** — a required correction. This is not only voice/brief/truth
+  violations or missed format/channel requirements — **any factual, mechanical, or
+  implementation claim the provided sources contradict is ALSO must-fix**, no matter
+  how minor it sounds. Overstating what something does, claiming permanence where the
+  real mechanism is reversible, misdescribing a workflow, an unsupported superlative,
+  a wrong number, misrepresenting a source — all must-fix. A draft with a known
+  factual error must never score a top mark or "Strong candidate to publish." Do not
+  lower scores just to look strict, though — a must-fix needs a real, citable reason.
+- **`improvement`** — a meaningful, optional improvement. Not required, but worth the
+  writer's attention. Surface at least one of these (or a `protect` note) on nearly
+  every draft, even a strong one — "nothing to add" should be rare and self-aware, not
+  a default. If a draft is genuinely flawless, say so explicitly in `self_pushback`
+  rather than returning an empty list with no comment.
+- **`protect`** — language you're flagging as especially strong. The harness
+  mechanically verifies this quote survives verbatim in the final text and blocks the
+  writer from "addressing" (altering) it. Use this to actively defend a piece's best
+  lines from a revision pass, not just to praise them.
+- **`consideration`** — minor, low-stakes, writer's call.
+
+Do not manufacture findings to fill categories — an accurate, mostly-empty findings
+list on a strong draft is a good outcome, as long as it's genuinely mostly-empty and
+you've said so.
 
 **Standing is domain-scaled.** "Why you have standing" means the configured sources
 reasonably support the piece — direct experience, repeatedly observed customer questions,
@@ -67,13 +95,21 @@ Fill each honestly; "Do not publish this version" and "too generic" are healthy 
 {
   "voice_score": 1-5,
   "positioning_score": 1-5,
-  "findings": [{"id": "F1", "severity": "must-fix|consideration", "quote": "exact passage", "why": "..."}],
+  "findings": [{"id": "F1", "severity": "must-fix|improvement|protect|consideration", "quote": "exact passage", "why": "..."}],
   "confidence": {"why_chosen": "...", "what_communicates": "...", "standing": "...", "risk": "..."},
   "comparison_note": "vs exemplars, if any",
-  "self_pushback": "why my scores might be wrong",
+  "self_pushback": "why my scores might be wrong — and if findings is empty or near-empty, say explicitly why nothing more was worth flagging",
   "verdict": "Strong candidate to publish | Good candidate with one issue to review | Interesting but somewhat exposed | Strategically useful, but currently too generic | Do not publish this version"
 }
 ```
+
+## `reevaluate` mode
+
+You'll also be called with `mode: "reevaluate"` on the WRITER'S REVISION (`final.md`,
+not the original draft) — same output shape. This is a read, not another revision
+opportunity: score and verdict what's actually in front of you now. If the writer left
+a must-fix unaddressed or altered protect-marked language, that should show up in your
+scores and verdict here — you are the last honest read before the packet is built.
 
 ## Bundle mode (`mode: "bundle"`)
 

@@ -7,6 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from chain.bundle import run_bundle, validate_bundle  # noqa: E402
+from chain.editorial_library import EditorialLibrary  # noqa: E402
 
 IDEA = "IDEA-0009"
 LONG = {"idea_id": IDEA, "working_title": "Legibility", "premise": "p",
@@ -38,20 +39,37 @@ class TestBundle(unittest.TestCase):
         home = Path(tempfile.mkdtemp())
         return {"chain_home": str(home), "workspace_dir": str(home / "workspace")}
 
+    def _library(self, config):
+        lib = EditorialLibrary.open(Path(config["chain_home"]) / "library")
+        lib.ideas.append({
+            "idea_id": IDEA, "working_title": "Legibility", "premise": "p",
+            "status": "proposed", "source_type": "", "source_ref": "",
+            "date_added": "2026-07-11", "last_touched": "2026-07-11",
+            "intended_format": "", "intended_channel": "", "primary_pillar": "",
+            "secondary_pillar": "", "user_interest": "", "user_feedback": "",
+            "chain_opportunity": "", "timeliness": "", "expires": "",
+            "related_work": "", "related_idea_ids": "", "rejected_reason": "",
+        })
+        lib.save()
+        return lib
+
     def _writer(self, inp):
+        fmt = inp["brief"]["format"]
+        text = (" ".join(["A real long-form sentence about the idea."] * 40) if fmt == "long_form"
+               else "A companion post that opens on the origin story, not a summary.")
         if inp["mode"] == "draft":
-            fmt = inp["brief"]["format"]
-            if fmt == "long_form":
-                return {"draft_text": " ".join(["A real long-form sentence about the idea."] * 40)}
-            return {"draft_text": "A companion post that opens on the origin story, not a summary."}
-        return {"final_text": "x", "addressed": [], "declined": []}
+            return {"draft_text": text}
+        # revise mode always runs now; echo back unchanged (findings is empty in _eval_ok)
+        return {"final_text": text, "addressed": [], "declined": []}
 
     def _evaluator(self, inp):
         return _bundle_ok() if inp.get("mode") == "bundle" else _eval_ok()
 
     def test_bundle_produces_two_drafts_and_one_packet(self):
-        res = run_bundle(config=self._config(), long_brief=dict(LONG), companion_brief=dict(COMP),
-                         writer_fn=self._writer, evaluator_fn=self._evaluator, today="2026-07-11")
+        cfg = self._config()
+        res = run_bundle(config=cfg, long_brief=dict(LONG), companion_brief=dict(COMP),
+                         writer_fn=self._writer, evaluator_fn=self._evaluator,
+                         library=self._library(cfg), today="2026-07-11")
         self.assertEqual(res["bundle_verdict"], "Strong candidate to publish")
         self.assertTrue(Path(res["bundle_packet_path"]).exists())
         self.assertTrue(Path(res["long"]["final_path"]).exists())
@@ -60,18 +78,29 @@ class TestBundle(unittest.TestCase):
         self.assertNotEqual(res["long"]["final_path"], res["companion"]["final_path"])
         packet = Path(res["bundle_packet_path"]).read_text(encoding="utf-8")
         self.assertIn("Companion angle: origin-story", packet)
+        # both pieces persisted, companion linked to the long-form piece as parent
+        reloaded = EditorialLibrary.open(Path(cfg["chain_home"]) / "library")
+        pieces = reloaded.pieces_for_idea(IDEA)
+        self.assertEqual(len(pieces), 2)
+        comp_row = next(p for p in pieces if p["format"] == "companion_post")
+        self.assertEqual(comp_row["parent_piece_id"], res["long"]["piece_id"])
+        self.assertEqual(reloaded.get_idea(IDEA)["status"], "produced")
 
     def test_mismatched_idea_id_rejected(self):
+        cfg = self._config()
         with self.assertRaises(ValueError):
-            run_bundle(config=self._config(), long_brief=dict(LONG),
+            run_bundle(config=cfg, long_brief=dict(LONG),
                        companion_brief={**COMP, "idea_id": "IDEA-9999"},
-                       writer_fn=self._writer, evaluator_fn=self._evaluator)
+                       writer_fn=self._writer, evaluator_fn=self._evaluator,
+                       library=self._library(cfg))
 
     def test_non_bundle_formats_rejected(self):
+        cfg = self._config()
         with self.assertRaises(ValueError):
-            run_bundle(config=self._config(),
+            run_bundle(config=cfg,
                        long_brief={**LONG, "format": "short_form"}, companion_brief=dict(COMP),
-                       writer_fn=self._writer, evaluator_fn=self._evaluator)
+                       writer_fn=self._writer, evaluator_fn=self._evaluator,
+                       library=self._library(cfg))
 
     def test_bad_bundle_verdict_rejected(self):
         with self.assertRaises(ValueError):
