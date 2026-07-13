@@ -72,6 +72,12 @@ python3 -m chain.editorial_library validate examples/demo-home/library
 
 The `examples/` synthetic persona lets you see the data model with **no private data**.
 
+## Repo changelog
+
+`docs/changelog.md` is this repo's own project history (not editorial output). Add a
+rough dated entry there during meaningful work; run `python3 -m chain.changelog_sync`
+to consolidate entries into readable threads and refresh `docs/architecture.md`.
+
 ## Docs
 
 - [Architecture](docs/architecture.md) · [Future work](docs/future-work.md)
