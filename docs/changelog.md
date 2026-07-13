@@ -9,7 +9,7 @@ docstring for the format). Run `python3 -m chain.changelog_sync` to consolidate 
 into readable threads.
 
 
-<!-- changelog-processed-through: 6500151e69736cea1fedb796b3a0bc1a96d5ab75 -->
+<!-- changelog-processed-through: fc52b5a0b82f7e928c41280e293187294228dc68 -->
 ---
 
 ## Pre-2026-07-13 — Everything before the changelog existed

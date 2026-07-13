@@ -74,9 +74,12 @@ The `examples/` synthetic persona lets you see the data model with **no private 
 
 ## Repo changelog
 
-`docs/changelog.md` is this repo's own project history (not editorial output). Add a
-rough dated entry there during meaningful work; run `python3 -m chain.changelog_sync`
-to consolidate entries into readable threads and refresh `docs/architecture.md`.
+`docs/changelog.md` is this repo's own project history (not editorial output).
+**Capturing a rough entry during meaningful work is required for every coding agent**
+— see `CLAUDE.md` → "Repo changelog". Synthesis (consolidating entries into readable
+threads and refreshing `docs/architecture.md`) is a separate, occasional pass you ask
+an active Claude Code or Codex session to run; it calls no AI API itself — see
+`python3 -m chain.changelog_sync`'s module docstring.
 
 ## Docs
 
