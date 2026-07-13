@@ -22,7 +22,7 @@ engine, same lenses, your voice.
 3. **Minimize cognitive overhead** — the fewest durable concepts that support a
    powerful workflow.
 
-See [docs/architecture.md](docs/architecture.md#design-principles).
+See [docs/architecture.md](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md#design-principles).
 
 ## Core concepts
 
@@ -51,7 +51,7 @@ the same rows.
 **Early (v0.0.1).** In place: the privacy firewall, config pattern, editorial library,
 **adaptive intake** (onboards any editorial maturity level — maps existing material in
 place, or collaboratively creates a starting voice and strategy; see
-[docs/intake.md](docs/intake.md)), idempotent source intake + idea harvesting, the
+[docs/intake.md](ENGINE__PUBLIC_GIT_TRACKED/docs/intake.md)), idempotent source intake + idea harvesting, the
 domain-agnostic Discover synthesis
 (portable `chain-discoverer`), and the production spine **Brief → Draft → Evaluate →
 bounded Finalize** (portable `chain-writer` / `chain-evaluator`, deterministic
@@ -59,14 +59,16 @@ bounded Finalize** (portable `chain-writer` / `chain-evaluator`, deterministic
 and **long-form + companion bundles** (evaluator bundle mode, one bundle packet). Validated
 live across two domains (a product persona and a sugaring studio), including the full
 evaluator → surgical-revision → preservation-lint loop. Next: the five-output autonomous
-run. See [docs/architecture.md](docs/architecture.md).
+run. See [docs/architecture.md](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md).
 
 ## Quickstart
 
 ```bash
 git clone <this repo> && cd chain
-cp chain.config.example.yaml chain.config.local.yaml   # point paths at your folders
-python3 -m unittest discover -s tests                  # runs with zero installs
+mkdir -p PRIVATE__YOUR_FILES_GITIGNORED
+cp chain.config.example.yaml PRIVATE__YOUR_FILES_GITIGNORED/chain.config.local.yaml  # point paths at your folders
+cd ENGINE__PUBLIC_GIT_TRACKED                           # the engine lives here
+python3 -m unittest discover -s tests                   # runs with zero installs
 python3 -m chain.editorial_library validate examples/demo-home/library
 ```
 
@@ -74,17 +76,21 @@ The `examples/` synthetic persona lets you see the data model with **no private 
 
 ## Repo changelog
 
-`docs/changelog.md` is this repo's own project history (not editorial output).
-**Capturing a rough entry during meaningful work is required for every coding agent**
-— see `CLAUDE.md` → "Repo changelog". Synthesis (consolidating entries into readable
-threads and refreshing `docs/architecture.md`) is a separate, occasional pass you ask
-an active Claude Code or Codex session to run; it calls no AI API itself — see
-`python3 -m chain.changelog_sync`'s module docstring.
+`ENGINE__PUBLIC_GIT_TRACKED/docs/changelog.md` is this repo's own project history (not
+editorial output). **Capturing a rough entry during meaningful work is required for
+every coding agent** — see `CLAUDE.md` → "Repo changelog". Synthesis (consolidating
+entries into readable threads and refreshing
+`ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md`) is a separate, occasional pass you
+ask an active Claude Code or Codex session to run; it calls no AI API itself — see
+`python3 -m chain.changelog_sync`'s module docstring (run from
+`ENGINE__PUBLIC_GIT_TRACKED/`, alongside `docs/`).
 
 ## Docs
 
-- [Architecture](docs/architecture.md) · [Future work](docs/future-work.md)
-- [Intake](docs/intake.md) · [Sources](docs/sources.md) · [Privacy](docs/privacy.md) · [The packet](docs/packet.md)
+All under [`ENGINE__PUBLIC_GIT_TRACKED/docs/`](ENGINE__PUBLIC_GIT_TRACKED/docs/):
+
+- [Architecture](ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md) · [Future work](ENGINE__PUBLIC_GIT_TRACKED/docs/future-work.md)
+- [Intake](ENGINE__PUBLIC_GIT_TRACKED/docs/intake.md) · [Sources](ENGINE__PUBLIC_GIT_TRACKED/docs/sources.md) · [Privacy](ENGINE__PUBLIC_GIT_TRACKED/docs/privacy.md) · [The packet](ENGINE__PUBLIC_GIT_TRACKED/docs/packet.md)
 
 ## License
 

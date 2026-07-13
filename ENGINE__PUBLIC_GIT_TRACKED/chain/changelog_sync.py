@@ -11,7 +11,7 @@ API. It only does the deterministic parts: gathering evidence, validating/normal
 structure, and managing the processed-through marker. Stdlib-only, like
 `path_safety.py` and `editorial_library.py`.
 
-Usage:
+Usage (run from ENGINE__PUBLIC_GIT_TRACKED/, this module's own directory):
     python3 -m chain.changelog_sync --mark-current   # establish/advance the baseline
     python3 -m chain.changelog_sync --normalize-only  # structure/ordering check
     python3 -m chain.changelog_sync                   # print evidence for an agent to
@@ -34,7 +34,7 @@ from .changelog_core import (
 )
 from .config import REPO_ROOT
 
-DOCS_DIR = REPO_ROOT / "docs"
+DOCS_DIR = REPO_ROOT / "ENGINE__PUBLIC_GIT_TRACKED" / "docs"
 
 PATHS = {
     "changelog": DOCS_DIR / "changelog.md",
@@ -126,7 +126,7 @@ def print_evidence(changelog: str, evidence: dict) -> None:
         "\n→ Next: consolidate the rough entries above into readable change threads "
         "directly in docs/changelog.md (preserve already-curated older history), "
         "update docs/architecture.md from the curated changelog if it changed "
-        "meaningfully, then run:\n"
+        "meaningfully, then run (from ENGINE__PUBLIC_GIT_TRACKED/):\n"
         "    python3 -m chain.changelog_sync --normalize-only\n"
         "    python3 -m chain.changelog_sync --mark-current"
     )
@@ -143,7 +143,7 @@ def main(argv=None) -> int:
 
     changelog = read_doc(PATHS["changelog"])
     if changelog is None:
-        raise RuntimeError("docs/changelog.md was not found.")
+        raise RuntimeError("ENGINE__PUBLIC_GIT_TRACKED/docs/changelog.md was not found.")
 
     normalized = normalize_changelog(changelog)
     head_commit = current_commit()

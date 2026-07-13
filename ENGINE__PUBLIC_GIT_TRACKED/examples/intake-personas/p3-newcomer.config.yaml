@@ -4,7 +4,7 @@
 # guided interview + short writing exercises that create a seed corpus (role
 # `samples`) and first-version voice/positioning collaboratively.
 
-chain_home: ./.chain/intake-p3
+chain_home: ../.chain/intake-p3
 
 voice_spec: ""
 positioning_pillars: ""

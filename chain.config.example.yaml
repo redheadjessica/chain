@@ -20,7 +20,8 @@ chain_home: ~/.chain
 
 # --- Intake: how much model-assisted setup you want to pay for ---------------
 # Full adaptive onboarding (assess/improve/create every editorial input at any
-# maturity level): `python3 -m chain.intake` + the chain-intake agent. docs/intake.md.
+# maturity level): `python3 -m chain.intake` (run from ENGINE__PUBLIC_GIT_TRACKED/) +
+# the chain-intake agent. See ENGINE__PUBLIC_GIT_TRACKED/docs/intake.md.
 # manual   : you map sources yourself below; deterministic indexing, ~no model cost.
 # assisted : CHAIN samples a few files, proposes a mapping, you confirm (recommended).
 # deep     : CHAIN inspects a broader/messier corpus and proposes a mapping (opt-in,
@@ -40,7 +41,8 @@ positioning_pillars: "{chain_home}/positioning-pillars.md"
 
 # Personal lint additions (banned_phrases / watch_words / channels) layered onto the
 # generic, persona-neutral rule set in lint_draft.py. Optional — see
-# canon/lint-overrides.template.md for the format. Empty/unset = generic behavior.
+# ENGINE__PUBLIC_GIT_TRACKED/canon/lint-overrides.template.md for the format.
+# Empty/unset = generic behavior.
 lint_overrides: ""
 
 # Optional: where your feedback ledger lives (referenced in draft-packet provenance).
@@ -53,7 +55,7 @@ feedback_ledger: ""
 # applications and a studio's client questions are both role `questions`). Recommended
 # roles: published, drafts, questions, feedback, reviews, research, projects, offers,
 # audience-needs, idea-source, reference, changes, custom. A source may have several;
-# unknown roles are allowed. See docs/sources.md.
+# unknown roles are allowed. See ENGINE__PUBLIC_GIT_TRACKED/docs/sources.md.
 #
 # Idea harvesting is generic: set `idea_marker` on ANY source that contains an
 # explicitly-marked idea list. Nothing here is relocated; the layout below is only an
@@ -96,7 +98,7 @@ sources:
     idea_marker: "Ideas"             # configurable heading — no filename is hard-coded
     enabled: false
 
-# --- Defaults for a run (overridable per run spec; see examples/runs/) -------
+# --- Defaults for a run (overridable per run spec; see ENGINE__PUBLIC_GIT_TRACKED/examples/runs/) -------
 defaults:
   channel: linkedin
   format: short_form

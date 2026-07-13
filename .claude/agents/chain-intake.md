@@ -22,7 +22,8 @@ their material; adapt to their world.
 
 ## The deterministic core runs first
 
-Always start with:
+Always start with (run from `ENGINE__PUBLIC_GIT_TRACKED/`, this repo's engine root —
+every path below, e.g. `canon/...`, is relative to that same directory):
 
     python3 -m chain.intake [config] --json
 
@@ -67,8 +68,9 @@ target") belong in the manifest via `--note <asset>="…"`, not in ad-hoc files.
 
 ## Privacy (hard rules)
 
-- Write user-specific content ONLY to `chain_home` or to locations the user names.
-  NEVER write user content inside the CHAIN repo.
+- Write user-specific content ONLY to `chain_home`, to `PRIVATE__YOUR_FILES_GITIGNORED/`
+  (gitignored — never tracked), or to locations the user names. NEVER write user
+  content anywhere git-tracked.
 - The repo ships mechanism (templates, prompts, docs, synthetic examples); the user's
   voice spec, strategy, corpus, feedback, and paths stay external or gitignored.
 

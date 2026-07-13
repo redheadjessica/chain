@@ -60,6 +60,41 @@ into readable threads.
   chain.config.local.yaml`-to-root instruction left over from Batch 1), `produce.py`,
   and both `examples/sample-*-packet.md` files. `chain doctor` and the full suite
   (119 tests) confirm clean after the move.
+- Batch 3: moved `chain/`, `canon/`, `docs/`, `examples/`, `tests/` under
+  `ENGINE__PUBLIC_GIT_TRACKED/` as one atomic `git mv` (101 files, all clean renames).
+  Root-required files (`README.md`, `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.codex/`,
+  `chain.config.example.yaml`, `pyproject.toml`, `.gitignore`) stayed put. Fixed the
+  code this broke: `chain/config.py`'s `REPO_ROOT` gained a third `.parent` (chain.
+  config.example.yaml and the PRIVATE/READY-TO-REVIEW roots stay at true root, not
+  nested); `changelog_sync.py`'s `DOCS_DIR` and `changelog_core.py`'s
+  `_SYNTHESIS_MAINTENANCE_PATHS`/`startswith` check now use `ENGINE__PUBLIC_GIT_TRACKED/`-
+  prefixed paths, matching what `git diff` actually reports post-move; `pyproject.toml`
+  gained a `package-dir` mapping and an updated `testpaths`. `test_path_safety.py`
+  needed a dual anchor (`REPO` = the new ENGINE level, self-correcting; `TOP_ROOT` =
+  `REPO.parent`, the true root — `.gitignore`, `.chain/`, and the PRIVATE/READY-TO-
+  REVIEW roots all still live at `TOP_ROOT`, not under ENGINE) since not everything the
+  firewall checks moved together.
+  Established one convention for the whole repo: run `chain` commands from
+  `ENGINE__PUBLIC_GIT_TRACKED/` (documented in the README quickstart, `CLAUDE.md`, both
+  `chain-intake` agent files, and `chain/changelog_sync.py`'s docstring) — this is also
+  why the demo/persona example configs' `chain_home: ./.chain/...` needed to become
+  `../.chain/...` (the true-root `.chain/` is now one level up from where these
+  configs are loaded and used), while their `sources:`/`voice_spec` paths stayed bare
+  (`examples/...` is a direct sibling from inside ENGINE, no prefix needed — caught and
+  reverted an over-correction here after `chain.intake` on the demo persona silently
+  returned 0 files for a source I'd double-prefixed by mistake). `tests/test_intake.py`
+  had the same fragility for real: `PersonaTests`/`ManifestTests` load persona configs
+  by absolute config-file path but the *values inside* those configs are CWD-relative,
+  so they silently classified everything as maturity level 3 (nothing found) when the
+  suite was run from the true root instead of ENGINE. Fixed at the source
+  (`persona_config()` now resolves relative source/canon paths to absolute
+  immediately after loading) rather than requiring a specific invocation directory —
+  the suite now passes identically run from either location.
+  Also fixed, opportunistically, while touching these same files: `chain-intake.md`/
+  `.toml` both still said "NEVER write user content inside the CHAIN repo," stale since
+  Batch 1 introduced the in-repo (gitignored) `PRIVATE__YOUR_FILES_GITIGNORED/`.
+  `chain doctor` and the full suite (119 tests, verified from both the true root and
+  ENGINE) confirm clean.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 

@@ -21,6 +21,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["chain"]
+package-dir = { "chain" = "ENGINE__PUBLIC_GIT_TRACKED/chain" }
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["ENGINE__PUBLIC_GIT_TRACKED/tests"]

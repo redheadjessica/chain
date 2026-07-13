@@ -5,7 +5,7 @@
 # themes are missing and should be DISTILLED from the material, not interviewed
 # from scratch.
 
-chain_home: ./.chain/intake-p2
+chain_home: ../.chain/intake-p2
 
 voice_spec: ""
 positioning_pillars: ""

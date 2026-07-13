@@ -14,8 +14,22 @@ REPO = Path(__file__).resolve().parent.parent
 PERSONAS = REPO / "examples" / "intake-personas"
 
 
+def _resolve_relative(value):
+    """Persona configs use paths relative to ENGINE__PUBLIC_GIT_TRACKED/ (where chain
+    commands are meant to be run from). Make them absolute against REPO right after
+    loading, so classify()/walk_source() work regardless of the test runner's CWD."""
+    if isinstance(value, str) and value and not value.startswith("~") and not Path(value).is_absolute():
+        return str((REPO / value).resolve())
+    return value
+
+
 def persona_config(name, home):
     cfg = load_config(local_path=PERSONAS / f"{name}.config.yaml", check_paths=False)
+    for key in ("voice_spec", "positioning_pillars", "lint_overrides", "feedback_ledger"):
+        if key in cfg:
+            cfg[key] = _resolve_relative(cfg[key])
+    for source in cfg.get("sources", []):
+        source["path"] = _resolve_relative(source["path"])
     cfg["chain_home"] = str(home)
     cfg["library_dir"] = str(Path(home) / "library")
     cfg["workspace_dir"] = str(Path(home) / "workspace")
@@ -184,7 +198,7 @@ class CliTests(unittest.TestCase):
         self.home = Path(self.tmp.name) / "home"
         # a persona config copy whose chain_home points at the temp dir
         raw = (PERSONAS / "p1-organized.config.yaml").read_text(encoding="utf-8")
-        raw = raw.replace("./.chain/intake-p1", str(self.home))
+        raw = raw.replace("../.chain/intake-p1", str(self.home))
         raw = raw.replace("./examples/", str(REPO / "examples") + "/")
         self.cfg_path = Path(self.tmp.name) / "cfg.yaml"
         self.cfg_path.write_text(raw, encoding="utf-8")

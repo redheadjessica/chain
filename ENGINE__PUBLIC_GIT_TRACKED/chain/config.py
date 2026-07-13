@@ -7,7 +7,7 @@ root (chain_home) is safe (path_safety). PyYAML is the single runtime dependency
 the editorial-library helper and path-safety checks are stdlib-only so they run
 (and are tested) without any install.
 
-Location model (see docs/architecture.md):
+Location model (see ENGINE__PUBLIC_GIT_TRACKED/docs/architecture.md):
   * chain_home            — the writable root for CHAIN's own machine state and its
                             durable library (default ~/.chain).
   * workspace_dir         — the canonical, visible home for generated output waiting
@@ -25,7 +25,7 @@ from pathlib import Path
 
 from .path_safety import check_writable_paths
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 EXAMPLE_CONFIG = REPO_ROOT / "chain.config.example.yaml"
 LOCAL_CONFIG = REPO_ROOT / "PRIVATE__YOUR_FILES_GITIGNORED" / "chain.config.local.yaml"
 # Canonical, visible home for generated output waiting on human review. Fixed

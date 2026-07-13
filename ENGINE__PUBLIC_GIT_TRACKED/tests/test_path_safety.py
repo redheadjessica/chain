@@ -12,45 +12,53 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from chain.path_safety import check_writable_paths, path_is_git_safe  # noqa: E402
 
+# REPO = this ENGINE directory (chain/, canon/, docs/, examples/, tests/ all live
+# here, moved together). TOP_ROOT = the true repo root, one level up — where
+# .gitignore, PRIVATE__YOUR_FILES_GITIGNORED/, and __READY_TO_REVIEW__PRIVATE_GITIGNORED/
+# actually live, and what path_safety checks are always run against.
 REPO = Path(__file__).resolve().parent.parent
+TOP_ROOT = REPO.parent
 
 
 class TestPathSafety(unittest.TestCase):
     def test_outside_repo_is_safe(self):
-        self.assertTrue(path_is_git_safe("~/.chain", REPO))
-        self.assertTrue(path_is_git_safe("/tmp/chain-home", REPO))
+        self.assertTrue(path_is_git_safe("~/.chain", TOP_ROOT))
+        self.assertTrue(path_is_git_safe("/tmp/chain-home", TOP_ROOT))
 
     def test_gitignored_prefix_inside_repo_is_safe(self):
-        self.assertTrue(path_is_git_safe(REPO / ".chain" / "demo-home", REPO))
-        self.assertTrue(path_is_git_safe(REPO / "__READY_TO_REVIEW__PRIVATE_GITIGNORED", REPO))
+        self.assertTrue(path_is_git_safe(TOP_ROOT / ".chain" / "demo-home", TOP_ROOT))
+        self.assertTrue(
+            path_is_git_safe(TOP_ROOT / "__READY_TO_REVIEW__PRIVATE_GITIGNORED", TOP_ROOT)
+        )
 
     def test_unignored_path_inside_repo_is_unsafe(self):
-        self.assertFalse(path_is_git_safe(REPO / "chain" / "leaky-home", REPO))
-        self.assertFalse(path_is_git_safe(REPO / "docs" / "secrets", REPO))
+        self.assertFalse(path_is_git_safe(REPO / "chain" / "leaky-home", TOP_ROOT))
+        self.assertFalse(path_is_git_safe(REPO / "docs" / "secrets", TOP_ROOT))
         # examples/ is committed on purpose, so it is NOT a safe writable root
-        self.assertFalse(path_is_git_safe(REPO / "examples" / "demo-home", REPO))
+        self.assertFalse(path_is_git_safe(REPO / "examples" / "demo-home", TOP_ROOT))
 
     def test_check_writable_paths_reports_the_leak(self):
         problems = check_writable_paths(
-            {"chain_home": str(REPO / "canon" / "home")}, REPO  # unsafe
+            {"chain_home": str(REPO / "canon" / "home")}, TOP_ROOT  # unsafe
         )
         self.assertEqual({p.name for p in problems}, {"chain_home"})
-        self.assertEqual(check_writable_paths({"chain_home": "~/.chain"}, REPO), [])
+        self.assertEqual(check_writable_paths({"chain_home": "~/.chain"}, TOP_ROOT), [])
 
     def test_check_writable_paths_covers_the_review_root(self):
         problems = check_writable_paths(
-            {"workspace_dir": str(REPO / "docs" / "leaky-workspace")}, REPO  # unsafe
+            {"workspace_dir": str(REPO / "docs" / "leaky-workspace")}, TOP_ROOT  # unsafe
         )
         self.assertEqual({p.name for p in problems}, {"workspace_dir"})
         self.assertEqual(
             check_writable_paths(
-                {"workspace_dir": str(REPO / "__READY_TO_REVIEW__PRIVATE_GITIGNORED")}, REPO
+                {"workspace_dir": str(TOP_ROOT / "__READY_TO_REVIEW__PRIVATE_GITIGNORED")},
+                TOP_ROOT,
             ),
             [],
         )
 
     def test_gitignore_covers_the_firewall(self):
-        gitignore = (REPO / ".gitignore").read_text(encoding="utf-8")
+        gitignore = (TOP_ROOT / ".gitignore").read_text(encoding="utf-8")
         self.assertIn(".chain/", gitignore)
         self.assertIn("PRIVATE__YOUR_FILES_GITIGNORED/", gitignore)
         self.assertIn("__READY_TO_REVIEW__PRIVATE_GITIGNORED/", gitignore)

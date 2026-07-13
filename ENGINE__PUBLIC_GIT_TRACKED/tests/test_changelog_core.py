@@ -155,22 +155,27 @@ class ProcessedCommitMarkerTests(unittest.TestCase):
         self.assertEqual(updated.count("changelog-processed-through"), 1)
 
 
+ENG = "ENGINE__PUBLIC_GIT_TRACKED"
+
+
 class MeaningfulChangedFilesTests(unittest.TestCase):
     def test_ignores_synthesis_only_files(self):
         self.assertEqual(
-            meaningful_changed_files(["docs/changelog.md", "chain/changelog_sync.py", "chain/produce.py"]),
-            ["chain/produce.py"],
+            meaningful_changed_files(
+                [f"{ENG}/docs/changelog.md", f"{ENG}/chain/changelog_sync.py", f"{ENG}/chain/produce.py"]
+            ),
+            [f"{ENG}/chain/produce.py"],
         )
 
     def test_synthesis_only_commit_does_not_trigger_itself(self):
         self.assertEqual(
             meaningful_changed_files(
                 [
-                    "chain/changelog_sync.py",
-                    "chain/changelog_core.py",
-                    "tests/test_changelog_core.py",
-                    "docs/changelog.md",
-                    "docs/doc-status.md",
+                    f"{ENG}/chain/changelog_sync.py",
+                    f"{ENG}/chain/changelog_core.py",
+                    f"{ENG}/tests/test_changelog_core.py",
+                    f"{ENG}/docs/changelog.md",
+                    f"{ENG}/docs/doc-status.md",
                     "pyproject.toml",
                 ]
             ),
@@ -184,14 +189,14 @@ class MeaningfulChangedFilesTests(unittest.TestCase):
         self.assertEqual(
             meaningful_changed_files(
                 [
-                    "chain/changelog_sync.py",
+                    f"{ENG}/chain/changelog_sync.py",
                     "pyproject.toml",
-                    "docs/changelog.md",
-                    "chain/produce.py",
-                    "docs/architecture.md",
+                    f"{ENG}/docs/changelog.md",
+                    f"{ENG}/chain/produce.py",
+                    f"{ENG}/docs/architecture.md",
                 ]
             ),
-            ["chain/produce.py", "docs/architecture.md"],
+            [f"{ENG}/chain/produce.py", f"{ENG}/docs/architecture.md"],
         )
 
 

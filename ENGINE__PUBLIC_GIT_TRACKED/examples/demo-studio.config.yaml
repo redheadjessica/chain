@@ -4,7 +4,7 @@
 # and positioning pillars — no career/product assumptions. Sources are mapped in place
 # with generic ROLES that tell Discover how to read them.
 
-chain_home: ./.chain/demo-studio
+chain_home: ../.chain/demo-studio
 positioning_pillars: "{chain_home}/positioning-pillars.md"
 
 sources:

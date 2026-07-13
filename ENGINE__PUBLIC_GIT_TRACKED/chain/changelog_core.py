@@ -160,15 +160,16 @@ def set_processed_commit(markdown: str, commit: str) -> str:
     raise ValueError("Cannot insert changelog marker because no entry heading exists.")
 
 
-# Paths CHAIN's own synthesis maintenance touches. Kept separate from engine/doc paths
-# so a synthesis-only commit never re-triggers itself.
+# Paths CHAIN's own synthesis maintenance touches, as reported by `git diff` (repo-root
+# relative). Kept separate from engine/doc paths so a synthesis-only commit never
+# re-triggers itself.
 _SYNTHESIS_MAINTENANCE_PATHS = frozenset(
     {
-        "docs/changelog.md",
-        "docs/doc-status.md",
-        "chain/changelog_core.py",
-        "chain/changelog_sync.py",
-        "tests/test_changelog_core.py",
+        "ENGINE__PUBLIC_GIT_TRACKED/docs/changelog.md",
+        "ENGINE__PUBLIC_GIT_TRACKED/docs/doc-status.md",
+        "ENGINE__PUBLIC_GIT_TRACKED/chain/changelog_core.py",
+        "ENGINE__PUBLIC_GIT_TRACKED/chain/changelog_sync.py",
+        "ENGINE__PUBLIC_GIT_TRACKED/tests/test_changelog_core.py",
     }
 )
 
@@ -183,7 +184,9 @@ def meaningful_changed_files(files: list) -> list:
     (CHAIN's dependency/tooling manifest, edited alongside tooling changes rather than
     editorial work).
     """
-    includes_synthesis_code = any(f.startswith("chain/changelog_") for f in files)
+    includes_synthesis_code = any(
+        f.startswith("ENGINE__PUBLIC_GIT_TRACKED/chain/changelog_") for f in files
+    )
     ignored = set(_SYNTHESIS_MAINTENANCE_PATHS)
     if includes_synthesis_code:
         ignored.add("pyproject.toml")

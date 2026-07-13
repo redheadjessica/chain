@@ -2,7 +2,7 @@
 # Level 1 expectation: corpus + voice guide + pillars already exist and are mapped in
 # place; intake should validate, find only optional gaps, and get out of the way.
 
-chain_home: ./.chain/intake-p1
+chain_home: ../.chain/intake-p1
 
 voice_spec: ./examples/intake-personas/p1-organized/voice-guide.md
 positioning_pillars: ./examples/intake-personas/p1-organized/pillars.md
