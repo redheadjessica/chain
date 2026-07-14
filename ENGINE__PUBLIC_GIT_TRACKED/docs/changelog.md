@@ -198,6 +198,26 @@ into readable threads.
   repo root with no implementation detail leaking through. `canon/`, `docs/`,
   `examples/` internal reorganization remains open (running observations, unchanged)
   but is explicitly a separate, later pass — not blocking.
+- Batch 7: repointed `chain.config.local.yaml` to Documents/Writing's reorganized
+  structure (`projects-and-sites/published/drafts/guidelines/analysis-and-tools`,
+  see Writing's own git history for that change). The old single `website` source
+  dissolved into three per-project entries — kept as separate entries rather than
+  one blanket `projects-and-sites` source, since a blanket entry's path would be a
+  parent of two other reference sources' paths and double-ingest their content
+  (the ingestion ledger dedupes per (source, path), not globally by file, so two
+  source names covering the same file is a real double-count, not just redundant).
+  `drafts` + `draft-ideas` merged into one `drafts` source (both role tags
+  preserved) matching Writing's own consolidation.
+  Simplified `PRIVATE__YOUR_FILES_GITIGNORED/`: the old `canon/` (4 file symlinks)
+  and 9 Writing-related entries under `sources/` collapsed into one `writing/`
+  folder with 4 directory-level symlinks (`guidelines`, `projects-and-sites`,
+  `published`, `drafts`) — purely a visibility simplification, since CHAIN's code
+  never reads through `PRIVATE__YOUR_FILES_GITIGNORED/`, only through
+  `chain.config.local.yaml`'s real paths. `sources/application` and
+  `sources/applications-2026` (not Writing paths) kept as-is. Verified with a real
+  `./chain intake --json` run — every source resolves with a sensible file count,
+  no zero-file source, no evidence of the double-ingestion this design avoids.
+  `chain doctor` and the full suite (119 tests) confirm clean.
 
 ## Pre-2026-07-13 — Everything before the changelog existed
 
